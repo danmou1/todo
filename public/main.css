@@ -28,9 +28,13 @@
 
 .sidenav .closebtn {
     position: absolute;
-    top: 0;
-    left: 0;
-    font-size: 36px;
+    top: 10px;
+    left: 10px;
+}
+
+.sidenav .closebtn img {
+    width: 36px;
+    height: 36px;
 }
 
 #main {
