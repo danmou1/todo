@@ -1,27 +1,50 @@
 const express = require('express');
+const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./database');
+const { getTasks, createTask, updateTask, deleteTask } = require('./tasks');
+
 const app = express();
 const port = 3000;
 
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+initializeDatabase()
+    .then(() => runMigrations())
+    .then(() => {
+        app.get('/tasks', async (req, res) => {
+            const tasks = await getTasks();
+            res.json(tasks);
+        });
 
-app.get('/', (req, res) => {
-    res.send('hello world');
-});
+        app.post('/tasks', async (req, res) => {
+            const { taskName } = req.body;
+            const newTask = await createTask(taskName);
+            res.status(201).json(newTask);
+        });
 
-app.get('/task', (req, res) => {
-    res.send("GET /task");
-});
+        app.put('/tasks/:taskId', async (req, res) => {
+            const { taskId } = req.params;
+            const { taskName } = req.body;
+            const updatedTask = await updateTask(taskId, taskName);
+            res.json(updatedTask);
+        });
 
-app.post('/task', (req, res) => {
-    res.send("POST /task");
-});
+        app.delete('/tasks/:taskId', async (req, res) => {
+            const { taskId } = req.params;
+            const { taskName } = req.body;
+            const updatedTask = await updateTask(taskId, taskName);
+            res.json(updatedTask);
+        });
 
-app.put('/task', (req, res) => {
-    res.send("PUT /task");
-});
-
-app.delete('/task', (req, res) => {
-    res.send("DELETE /task");
-});
+        app.listen(port, () => {
+            console.log(`Server is running on http://localhost:${port}`);
+        });
+    })
+    .catch((error) => {
+        console.error('Error intializing database:', error.message);
+        process.exit(1);
+    })
+    .finally(() => {
+        process.on('SIGINT', () => {
+            closeDatabaseConnection().finnaly(() => {
+                process.exit(0);
+            });
+        });
+    });
