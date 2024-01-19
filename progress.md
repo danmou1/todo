@@ -13,7 +13,14 @@
 # 15/01/2024 21PM -> 0AM
 - troubleshooting permission issues, probably due to how the external drive is mounted, since my repository is there. will change its location to the SSD partition to avoid such headaches in the future.
 
-# 16/01;/2024 20PM -> 0AM
+# 16/01/2024 20PM -> 0AM
 - figuring out the db structure
 - messing with sql scripts
 - as I cloned with https, I couldn't commit in time to appear as 16/01 and had to troubleshoot it. turns out I just had to change the remote address.
+
+# 17/01/2024 22PM ->
+- luz caiu
+
+# 18/01/2024 18:00 -> 21:20
+- added server scrips and fixed sql migration syntax
+- will refactor
