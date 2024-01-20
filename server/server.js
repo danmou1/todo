@@ -31,7 +31,7 @@ initializeDatabase()
 
             try {
                 await deleteTask(taskId);
-                res.statuys(204).send();
+                res.status(204).send();
             } catch (error) {
                 console.error('Error deleting task:', error);
                 res.sendStatus(500).json({ error: 'Internal Server Error '});
