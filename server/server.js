@@ -28,9 +28,14 @@ initializeDatabase()
 
         app.delete('/tasks/:taskId', async (req, res) => {
             const { taskId } = req.params;
-            const { taskName } = req.body;
-            const updatedTask = await updateTask(taskId, taskName);
-            res.json(updatedTask);
+
+            try {
+                await deleteTask(taskId);
+                res.statuys(204).send();
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                res.sendStatus(500).json({ error: 'Internal Server Error '});
+            }
         });
 
         app.listen(port, () => {
