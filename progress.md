@@ -24,3 +24,8 @@
 # 18/01/2024 18:00 -> 21:20
 - added server scrips and fixed sql migration syntax
 - will refactor
+
+# 19/01/2024 21PM -> 00:40
+- fixed typos
+- read some db theory
+- trying postman
