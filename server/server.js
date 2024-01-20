@@ -43,7 +43,7 @@ initializeDatabase()
     })
     .finally(() => {
         process.on('SIGINT', () => {
-            closeDatabaseConnection().finnaly(() => {
+            closeDatabaseConnection().finally(() => {
                 process.exit(0);
             });
         });
