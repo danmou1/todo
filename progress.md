@@ -30,6 +30,6 @@
 - read some db theory
 - trying postman
 
-# 22/01/2024 - 20PM ->
+# 22/01/2024 - 20PM -> 23
 - testing CRUD endpoints with postman
 - CRUD endpoints functioning
