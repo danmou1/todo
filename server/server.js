@@ -5,51 +5,75 @@ const { getTasks, createTask, updateTask, deleteTask } = require('./tasks');
 const app = express();
 const port = 3000;
 
-initializeDatabase()
-    .then(() => runMigrations())
-    .then(() => {
-        app.get('/tasks', async (req, res) => {
-            const tasks = await getTasks();
-            res.json(tasks);
-        });
+app.use(express.json());
 
-        app.post('/tasks', async (req, res) => {
-            const { taskName } = req.body;
-            const newTask = await createTask(taskName);
-            res.status(201).json(newTask);
-        });
+async function startServer() {
+    try {
+        await initializeDatabase();
+        await runMigrations();
 
-        app.put('/tasks/:taskId', async (req, res) => {
-            const { taskId } = req.params;
-            const { taskName } = req.body;
-            const updatedTask = await updateTask(taskId, taskName);
-            res.json(updatedTask);
-        });
-
-        app.delete('/tasks/:taskId', async (req, res) => {
-            const { taskId } = req.params;
-
-            try {
-                await deleteTask(taskId);
-                res.status(204).send();
-            } catch (error) {
-                console.error('Error deleting task:', error);
-                res.sendStatus(500).json({ error: 'Internal Server Error '});
-            }
-        });
+        setupRoutes();
 
         app.listen(port, () => {
             console.log(`Server is running on http://localhost:${port}`);
         });
-    })
-    .catch((error) => {
-        console.error('Error intializing database:', error.message);
+    } catch (error) {
+        console.error('Error initializing database:', error.message);
         process.exit(1);
-    })
-    .finally(() => {
-        process.on('SIGINT', () => {
-            closeDatabaseConnection().finally(() => {
-                process.exit(0);
-            });
-        });
+    }
+}
+
+function setupRoutes() {
+    app.get('/tasks', async(req, res) => {
+        try {
+            const tasks = await getTasks();
+            res.json(tasks);
+        } catch (error) {
+            handleRouteError(res, error)
+        }
     });
+
+    app.post('/tasks', async (req, res) => {
+        try {
+            const taskData = await createTask(req.body);
+            res.status(201).json(taskData);
+        } catch (error) {
+            handleRouteError(res, error);
+        }
+    });
+
+    app.put('/tasks/:taskId', async (req, res) => {
+        const { taskId } = req.params;
+
+        try {
+            const updatedTask = await updateTask(taskId, req.body);
+            res.json(updatedTask);
+        } catch (error) {
+            handleRouteError(res, error);
+        }
+    });
+
+    app.delete('/tasks/:taskId', async (req, res) => {
+        const { taskId } = req.params;
+
+        try {
+            await deleteTask(taskId);
+            res.status(204).send();
+        } catch (error) {
+            handleRouteError(res, error);
+        }
+    });
+}
+
+function handleRouteError(res, error) {
+    console.error('Route Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+}
+
+process.on('SIGINT', () => {
+    closeDatabaseConnection().finally(() => {
+        process.exit(0);
+    });
+});
+
+startServer();
