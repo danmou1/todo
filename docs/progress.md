@@ -37,3 +37,4 @@
 # 23/01/2024 - 21PM ->
 - restructured directories
 - testing ejs
+- mime type issues, im probably doing something very dumb yet im clueless as to what it is
