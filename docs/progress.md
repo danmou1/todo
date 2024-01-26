@@ -38,3 +38,6 @@
 - restructured directories
 - testing ejs
 - mime type issues, im probably doing something very dumb yet im clueless as to what it is
+
+# 25/01/2024 - 
+- fixed the issue, idk what to do now
