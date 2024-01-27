@@ -1,7 +1,7 @@
 const express = require('express');
 
-const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./database');
-const { getTasks, createTask, updateTask, deleteTask } = require('./tasks');
+const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
+const { getTasks, createTask, updateTask, deleteTask } = require('./db/queries');
 
 const app = express();
 const port = 3000;
