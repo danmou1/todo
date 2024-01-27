@@ -41,3 +41,8 @@
 
 # 25/01/2024 - 
 - fixed the issue, idk what to do now
+
+# 26/01/2024 21PM -> 00AM
+- dir reestructuring, working on ejs pages
+- trying to create a home page, added styled sidebar buttons without functionality
+- will implement the buttons tomorrow
