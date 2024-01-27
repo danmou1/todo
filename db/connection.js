@@ -10,7 +10,7 @@ const client = new Client({
   port: 5432
 });
 
-const migrationDir = path.join(__dirname, './sql/migrations');
+const migrationDir = path.join(__dirname, '../sql/migrations');
 
 async function initializeDatabase() {
   try {

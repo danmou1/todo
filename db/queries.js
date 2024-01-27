@@ -1,4 +1,4 @@
-const { getClient } = require('./database');
+const { getClient } = require('./connection');
 
 const client = getClient();
 
