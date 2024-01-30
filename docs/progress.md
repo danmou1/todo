@@ -46,3 +46,9 @@
 - dir reestructuring, working on ejs pages
 - trying to create a home page, added styled sidebar buttons without functionality
 - will implement the buttons tomorrow
+
+# 29/01/2024 21PM -> 00AM
+- learning ejs things
+- learned that I have to constantly commit in order to not lose all my progress due
+- added a delete button
+- I will refactor the entirety of the views
