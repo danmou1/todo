@@ -1,4 +1,4 @@
-<%- include('./pages/home.ejs', { pageTitle: 'Tasks', body: "" }) %>
+<%- include('./pages/home.ejs', { pageTitle: 'Tasks', body: '<div id="tasks-container></div>"' }) %>
 <link rel="stylesheet" type="text/css" href="/styles/tasks.css">
 <table class="tasks">
     <thead>
@@ -8,17 +8,23 @@
             <th>Due Date</th>
             <th>Completed</th>
             <th>Priority</th>
+            <th><input type="button" value="New Task"/></th>
         </tr>
     </thead>
     <tbody>
+        <tr>
         <% tasks.forEach(task => { %>
-            <tr>
                 <td><%= task.title %></td>
                 <td><%= task.description %></td>
                 <td><%= task.due_date %></td>
                 <td><%= task.completed ? 'Yes' : 'No' %></td>
                 <td><%= task.priority %></td>
-            </tr>
-        <% }); %>
+                <td>
+                    <input type="button" value="Delete" onclick="deleteTask('<%= task.task_id %>', '<%= task.title %>')" />
+                </td>
+            <% }); %>
+        </tr>
     </tbody>
 </table>
+
+<script src="/scripts/taskHandler.js"></script>
