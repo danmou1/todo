@@ -61,4 +61,6 @@
 
 # 31/01/2024 4:30PM ->
 - unstiled new task button now works
-- have to implement the delete button correctly
+- delete button is probably overengineered, but it works so idc for now
+- due date info is broken, probably because it's not taking into account the timezone that the database requires
+- basic styling to make the buttons feel like buttons
