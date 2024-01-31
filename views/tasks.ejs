@@ -1,30 +1,39 @@
-<%- include('./pages/home.ejs', { pageTitle: 'Tasks', body: '<div id="tasks-container></div>"' }) %>
+<%- include('./layout.ejs', { pageTitle: 'Tasks', body: ''}) %>
 <link rel="stylesheet" type="text/css" href="/styles/tasks.css">
-<table class="tasks">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Due Date</th>
-            <th>Completed</th>
-            <th>Priority</th>
-            <th><input type="button" value="New Task"/></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-        <% tasks.forEach(task => { %>
-                <td><%= task.title %></td>
-                <td><%= task.description %></td>
-                <td><%= task.due_date %></td>
-                <td><%= task.completed ? 'Yes' : 'No' %></td>
-                <td><%= task.priority %></td>
-                <td>
-                    <input type="button" value="Delete" onclick="deleteTask('<%= task.task_id %>', '<%= task.title %>')" />
-                </td>
-            <% }); %>
-        </tr>
-    </tbody>
-</table>
+<div id="tasks-container">
+    <table class="tasks">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Due Date</th>
+                <th>Completed</th>
+                <th>Priority</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+            <% tasks.forEach(task => { %>
+                    <td><%= task.title %></td>
+                    <td><%= task.description %></td>
+                    <td><%= task.due_date %></td>
+                    <td><%= task.completed ? 'Yes' : 'No' %></td>
+                    <td><%= task.priority %></td>
+                    <td>
+                        <input type="button" value="Delete" onclick="deleteTask('<%= task.task_id %>', '<%= task.title %>')" />
+                    </td>
+                <% }); %>
+            </tr>
+        </tbody>
+    </table>
+
+    <button id="new-task-button">New Task</button>
+
+    
+</div>
+
+<div id="form-container" class="form-container" style="display: none;">
+    <%- include('form.ejs') %>
+</div>
 
 <script src="/scripts/taskHandler.js"></script>
