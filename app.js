@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
 const { getTasks, createTask, updateTask, deleteTask } = require('./db/queries');
@@ -6,11 +7,12 @@ const { getTasks, createTask, updateTask, deleteTask } = require('./db/queries')
 const app = express();
 const port = 3000;
 
-
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
-
 app.use(express.json());
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 async function startServer() {
     try {
@@ -44,8 +46,8 @@ function setupRoutes() {
 
     app.post('/app/tasks', async (req, res) => {
         try {
-            const taskData = await createTask(req.body);
-            res.status(201).json(taskData);
+            await createTask(req.body);
+            res.redirect('/app/tasks');
         } catch (error) {
             handleRouteError(res, error);
         }
