@@ -12,8 +12,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
             <% tasks.forEach(task => { %>
+                <tr>
                     <td><%= task.title %></td>
                     <td><%= task.description %></td>
                     <td><%= task.due_date %></td>
@@ -22,8 +22,8 @@
                     <td>
                         <input type="button" value="Delete" onclick="deleteTask('<%= task.task_id %>', '<%= task.title %>')" />
                     </td>
-                <% }); %>
-            </tr>
+                </tr>
+            <% }); %>
         </tbody>
     </table>
 
@@ -32,7 +32,7 @@
     
 </div>
 
-<div id="form-container" class="form-container" style="display: none;">
+<div id="form-container" class="form-containere" style="display: none;">
     <%- include('form.ejs') %>
 </div>
 
