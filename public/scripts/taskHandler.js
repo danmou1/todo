@@ -19,3 +19,14 @@ function deleteTask(taskId, title) {
         })
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const newTaskButton = document.getElementById('new-task-button');
+    const formContainer = document.getElementById('form-container');
+    const tasksContainer = document.getElementById('tasks-container');
+
+    newTaskButton.addEventListener('click', function () {
+        formContainer.style.display = 'block';
+        tasksContainer.style.display = 'none';
+    });
+});
