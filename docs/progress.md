@@ -52,3 +52,9 @@
 - learned that I have to constantly commit in order to not lose all my progress due
 - added a delete button
 - I will refactor the entirety of the views
+
+# 30/01/2024 23PM -> 2:30AM
+- still learning ejs things
+- now the form renders in place of the table through hiding it in styling, instead of linking to another page
+- form added, post request still not implemented
+- somewhat refactored views
