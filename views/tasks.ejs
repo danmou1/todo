@@ -9,6 +9,7 @@
                 <th>Due Date</th>
                 <th>Completed</th>
                 <th>Priority</th>
+                <th><button id="new-task-button" class="new-task-button">New Task</button></th>
             </tr>
         </thead>
         <tbody>
@@ -20,19 +21,15 @@
                     <td><%= task.completed ? 'Yes' : 'No' %></td>
                     <td><%= task.priority %></td>
                     <td>
-                        <input type="button" value="Delete" onclick="deleteTask('<%= task.task_id %>', '<%= task.title %>')" />
+                        <input type="button" value="Delete" class="delete-button" onclick="deleteTask('<%= task.task_id %>', '<%= task.title %>')" />
                     </td>
                 </tr>
             <% }); %>
         </tbody>
-    </table>
-
-    <button id="new-task-button">New Task</button>
-
-    
+    </table>    
 </div>
 
-<div id="form-container" class="form-containere" style="display: none;">
+<div id="form-container" class="form-container" style="display: none;">
     <%- include('form.ejs') %>
 </div>
 
