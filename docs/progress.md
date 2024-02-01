@@ -59,10 +59,11 @@
 - form added, post request still not implemented
 - somewhat refactored views
 
-# 31/01/2024 4:30PM -> 5:30PM / 7PM -> 9:30PM
+# 31/01/2024 4:30PM -> 5:30PM / 7PM -> 10:00PM
 - unstiled new task button now works
 - delete button is probably overengineered, but it works so idc for now
 - due date info is broken, probably because it's not taking into account the timezone that the database requires
 - basic styling to make the buttons feel like buttons
 - fixed POST bugs (mainly typos), now new tasks will properly have their completed status filled and their due date.
 - have yet to implement the completion of tasks through checkboxes.
+- trying to stay sane
