@@ -24,7 +24,6 @@ async function initializeDatabase() {
 async function runMigrations() {
   try {
     const migrationFiles = (await fs.readdir(migrationDir)).sort();
-
     for (const fileName of migrationFiles) {
       const filePath = path.join(migrationDir, fileName);
       const migrationFile = await fs.readFile(filePath, 'utf-8');

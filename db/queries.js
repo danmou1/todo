@@ -7,13 +7,25 @@ async function getTasks() {
     return result.rows;
 }
 
+async function getIncompleteTasks() {
+    const result = await client.query('SELECT * FROM tasks WHERE completed IS FALSE');
+    console.log('false tasks');
+    return result.rows;
+}
+
+async function getCompleteTasks() {
+    const result = await client.query('SELECT * FROM tasks WHERE completed IS TRUE');
+    console.log('true tasks');
+    return result.rows;
+}
+
 async function createTask(taskData) {
-    const { title, description, due_date, completed, priority } = taskData;
+    const { title, description, dueDate, priority } = taskData;
 
     try {
         const result = await client.query(
-            'INSERT INTO tasks VALUES (DEFAULT, $1, $2, $3, CURRENT_TIMESTAMP, $4, $5) RETURNING *',
-            [title, description, due_date, completed, priority]
+            'INSERT INTO tasks VALUES (DEFAULT, $1, $2, $3, CURRENT_TIMESTAMP, $4) RETURNING *',
+            [title, description, dueDate, priority]
         );
 
         return result.rows[0];
@@ -45,6 +57,8 @@ async function deleteTask(taskId) {
 
 module.exports = {
     getTasks,
+    getIncompleteTasks,
+    getCompleteTasks,
     createTask,
     updateTask,
     deleteTask,
