@@ -4,7 +4,7 @@ CREATE TABLE tasks (
     description TEXT,
     due_date DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    completed BOOLEAN DEFAULT FALSE,
+    completed BOOLEAN DEFAULT FALSE NOT NULL,
     priority INTEGER DEFAULT 0
 );
 
@@ -23,5 +23,5 @@ CREATE TABLE subtasks (
     subtask_id SERIAL PRIMARY KEY,
     task_id INTEGER REFERENCES tasks(task_id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
-    completed BOOLEAN DEFAULT FALSE
+    completed BOOLEAN DEFAULT FALSE NOT NULL
 );
