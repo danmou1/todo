@@ -4,10 +4,10 @@
     <table class="tasks">
         <thead>
             <tr>
+                <th>✔</th>
                 <th>Title</th>
                 <th>Description</th>
                 <th>Due Date</th>
-                <th>Completed</th>
                 <th>Priority</th>
                 <th><button id="new-task-button" class="new-task-button">New Task</button></th>
             </tr>
@@ -15,10 +15,10 @@
         <tbody>
             <% tasks.forEach(task => { %>
                 <tr>
+                    <td><input type="checkbox" id="task-checkbox"></td>
                     <td><%= task.title %></td>
                     <td><%= task.description %></td>
                     <td><%= task.due_date %></td>
-                    <td><%= task.completed ? 'Yes' : 'No' %></td>
                     <td><%= task.priority %></td>
                     <td>
                         <input type="button" value="Delete" class="delete-button" onclick="deleteTask('<%= task.task_id %>', '<%= task.title %>')" />
