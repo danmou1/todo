@@ -20,6 +20,15 @@ function deleteTask(taskId, title) {
     }
 }
 
+function toggleSelectAll() {
+    const selectAllCheckbox = document.getElementById('select-all-checkbox');
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="task-checkbox"]');
+
+    checkboxes.forEach(checkboxes => {
+        checkboxes.checked = selectAllCheckbox.checked;
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const newTaskButton = document.getElementById('new-task-button');
     const formContainer = document.getElementById('form-container');
