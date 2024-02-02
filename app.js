@@ -87,16 +87,16 @@ function setupRoutes() {
 
         try {
             await deleteTask(taskId);
-            res.status(204).send();
+            res.status(200).send({ success: true });
         } catch (error) {
-            handleRouteError(res, error);
+            res.status(500).send({ success: false, error: "Internal server error" });
         }
     });
 }
 
 function handleRouteError(res, error) {
     console.error('Route Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal server error' });
 }
 
 process.on('SIGINT', () => {
