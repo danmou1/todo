@@ -67,3 +67,6 @@
 - fixed POST bugs (mainly typos), now new tasks will properly have their completed status filled and their due date.
 - have yet to implement the completion of tasks through checkboxes.
 - trying to stay sane
+
+# 01/02/2024 11PM ->
+- delete button now deletes the row on the client side after recieving a response from the DELETE endpoint.
