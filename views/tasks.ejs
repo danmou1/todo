@@ -14,7 +14,7 @@
         </thead>
         <tbody>
             <% tasks.forEach(task => { %>
-                <tr>
+                <tr id="task-row-<%= task.task_id %>">
                     <td><input type="checkbox" id="task-checkbox"></td>
                     <td><%= task.title %></td>
                     <td><%= task.description %></td>
@@ -33,4 +33,4 @@
     <%- include('form.ejs') %>
 </div>
 
-<script src="/scripts/taskHandler.js"></script>
+<script src="/scripts/script.js"></script>
