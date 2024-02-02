@@ -1,33 +1,36 @@
-function deleteTask(taskId, title) {
+async function deleteTask(taskId, title) {
     console.log('Deletion started');
-    if (confirm(`Are you sure you want to delete "${title}"?`)) {
-        fetch(`/app/tasks/${taskId}`, {
+
+    const confirmed = confirm(`Are you sure you want to delete "${title}"?`);
+    
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/app/tasks/${taskId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             }
-        })
-        .then(res => {
-            if (res.ok) {
+        });
+
+        if (response.ok) {
+            const deletedRow = document.getElementById(`task-row-${taskId}`);
+            if (deletedRow) {
+                deletedRow.remove();
                 console.log("Task deleted successfully.");
             } else {
-                console.error("Error deleting task");
+                console.error("Error: Deleted row not found in the table.");
             }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        })
+        } else {
+            const errorMessage = await response.text();
+            console.error(`Error deleting task: ${errorMessage}`);
+        }
+    } catch (error) {
+        console.error("Error:", error);
     }
-}
-
-function toggleSelectAll() {
-    const selectAllCheckbox = document.getElementById('select-all-checkbox');
-    const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="task-checkbox"]');
-
-    checkboxes.forEach(checkboxes => {
-        checkboxes.checked = selectAllCheckbox.checked;
-    });
-}
+};
 
 document.addEventListener('DOMContentLoaded', function() {
     const newTaskButton = document.getElementById('new-task-button');
