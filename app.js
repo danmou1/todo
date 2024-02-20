@@ -73,10 +73,12 @@ function setupRoutes() {
 
     app.put('/app/tasks/:taskId', async (req, res) => {
         const { taskId } = req.params;
+        console.log("Params:", req.params);
+        console.log("Body:", req.body);
 
         try {
-            const updatedTask = await updateTask(taskId, req.body);
-            res.json(updatedTask);
+            await updateTask(taskId, req.body);
+            res.redirect('app/tasks');
         } catch (error) {
             handleRouteError(res, error);
         }

@@ -34,7 +34,7 @@ async function createTask(taskData) {
     }
 }
 
-// destructive writing, just get data in the front end before letting the user change anything.
+// overwrites all fields
 async function updateTask(taskId, taskData) {
     const { title, description, due_date, completed, priority } = taskData;
 

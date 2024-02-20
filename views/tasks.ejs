@@ -15,7 +15,7 @@
         <tbody>
             <% tasks.forEach(task => { %>
                 <tr id="task-row-<%= task.task_id %>">
-                    <td><input type="checkbox" id="task-checkbox"></td>
+                    <td><input type="checkbox" id="task-checkbox" data-taskId='<%= task.task_id %>'></td>
                     <td><%= task.title %></td>
                     <td><%= task.description %></td>
                     <td><%= task.due_date %></td>
