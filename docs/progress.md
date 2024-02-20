@@ -70,3 +70,5 @@
 
 # 01/02/2024 11PM ->
 - delete button now deletes the row on the client side after recieving a response from the DELETE endpoint.
+
+# 19/02/2024 9PM -> 12PM
