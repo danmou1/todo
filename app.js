@@ -38,7 +38,7 @@ function setupRoutes() {
     app.get('/app/tasks', async (req, res) => {
         try {
             const tasks = await getTasks();
-            res.render('tasks', { pageTitle: 'Tasks', tasks });
+            res.render('layout', { pageTitle: 'Tasks', tasks });
         } catch (error) {
             handleRouteError(res, error)
         }
@@ -47,7 +47,7 @@ function setupRoutes() {
     app.get('/app/tasks/incomplete', async (req, res) => {
         try {
             const tasks = await getIncompleteTasks();
-            res.render('tasks', { pageTitle: 'Incomplete Tasks', tasks });
+            res.render('layout', { pageTitle: 'Incomplete Tasks', tasks });
         } catch (error) {
             handleRouteError(res, error);
         }
@@ -56,7 +56,7 @@ function setupRoutes() {
     app.get('/app/tasks/completed', async (req, res) => {
         try {
             const tasks = await getCompleteTasks();
-            res.render('tasks', { pageTitle: 'Completed Tasks', tasks });
+            res.render('layout', { pageTitle: 'Completed Tasks', tasks });
         } catch (error) {
             handleRouteError(res, error);
         }
