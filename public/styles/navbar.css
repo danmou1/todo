@@ -1,8 +1,8 @@
 .navbar {
-    width: 6%;
+    width: 8rem;
     height: 100%;
     position: fixed;
-    padding: 2%;
+    padding: 2rem;
     background-color: var(--bg-primary);
 }
 
@@ -18,4 +18,14 @@
 
 .nav-item {
     width: 100%;
+    padding: 1rem 2rem 1rem;
+    font-size: 1.5rem;
+}
+
+.nav-item a {
+    text-decoration: none;
+    color: var(--text-primary);
+}
+.nav-item:hover {
+    background-color: var(--bg-secondary);
 }
