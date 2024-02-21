@@ -1,10 +1,14 @@
-* {
-    box-sizing: border-box;
+:root {
+    font-size: 16px;
+    font-family: sans-serif;
+    --text-primary: #ffffff99;
+    --text-secondary: #b6b6b6;
+    --bg-primary: #1d1d1d;
+    --bg-secondary: #141418;
 }
 
 body {
     margin: 0;
-    font-family: sans-serif;
-    background-color: #000;
-    color: #fff;
+    background-color: black;
+    color: white;
 }
