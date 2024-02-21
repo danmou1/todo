@@ -77,3 +77,5 @@
 # 20/02/2024 9PM ->
 - fixed PUT request, now it filters null values from the query.
 - fixed checkboxes not being synchronized with the database.
+- made ejs embedding readable.
+- init basic sidebar, cause I forgot where I put the old one
