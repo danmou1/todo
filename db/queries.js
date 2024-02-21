@@ -3,17 +3,32 @@ const { getClient } = require('./connection');
 const client = getClient();
 
 async function getTasks() {
-    const result = await client.query('SELECT * FROM tasks');
+    const result = await client.query(`
+        SELECT
+            *,
+            to_char(due_date, 'DD-MM-YYYY') AS due_date
+        FROM tasks
+    `);
     return result.rows;
 }
 
 async function getIncompleteTasks() {
-    const result = await client.query('SELECT * FROM tasks WHERE completed IS FALSE');
+    const result = await client.query(`
+        SELECT
+            *,
+            to_char(due_date, 'DD-MM-YYYY') AS due_date
+        FROM tasks WHERE completed IS FALSE
+    `);
     return result.rows;
 }
 
 async function getCompleteTasks() {
-    const result = await client.query('SELECT * FROM tasks WHERE completed IS TRUE');
+    const result = await client.query(`
+        SELECT
+            *,
+            to_char(due_date, 'DD-MM-YYYY') AS due_date
+        FROM tasks WHERE completed IS TRUE
+    `);
     return result.rows;
 }
 
