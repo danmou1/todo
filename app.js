@@ -73,8 +73,6 @@ function setupRoutes() {
 
     app.put('/app/tasks/:taskId', async (req, res) => {
         const { taskId } = req.params;
-        console.log("Params:", req.params);
-        console.log("Body:", req.body);
 
         try {
             await updateTask(taskId, req.body);

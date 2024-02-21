@@ -9,13 +9,11 @@ async function getTasks() {
 
 async function getIncompleteTasks() {
     const result = await client.query('SELECT * FROM tasks WHERE completed IS FALSE');
-    console.log('false tasks');
     return result.rows;
 }
 
 async function getCompleteTasks() {
     const result = await client.query('SELECT * FROM tasks WHERE completed IS TRUE');
-    console.log('true tasks');
     return result.rows;
 }
 
@@ -36,15 +34,26 @@ async function createTask(taskData) {
 
 // overwrites all fields
 async function updateTask(taskId, taskData) {
-    const { title, description, due_date, completed, priority } = taskData;
+    const updates = [];
+    const params = [];
+    
+    Object.entries(taskData).forEach(([key, value]) => {
+        if (key !== 'task_id' && value !== null && value !== undefined) {
+            updates.push(`${key} = $${params.length + 1}`);
+            params.push(value);
+        }
+    });
+    params.push(taskId);
+
+    const setClause = updates.join(', ');
 
     try {
         const result = await client.query(
-            'UPDATE tasks SET title = $1, description = $2, due_date = $3, completed = $4, priority = $5 ' +
-            'WHERE task_id = $6 RETURNING *',
-            [title, description, due_date, completed, priority, taskId]
+            `UPDATE tasks SET ${setClause} WHERE task_id = $${params.length} RETURNING *`,
+            params
         );
-
+        
+        console.log(`[${taskId}]: Updated task.`);
         return result.rows[0];
     } catch (error) {
         console.error('Error updating task:', error);
