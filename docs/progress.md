@@ -79,3 +79,7 @@
 - fixed checkboxes not being synchronized with the database.
 - made ejs embedding readable.
 - init basic sidebar, cause I forgot where I put the old one
+
+# 21/02/2024 4PM ->
+- properly formatting due_date server-side (database unchanged)
+- styling
