@@ -84,3 +84,4 @@
 - properly formatting due_date server-side (database unchanged)
 - styling
 - todo: change priority to be in relation to the present tasks, instead of being a static value
+- todo: search bar
