@@ -14,8 +14,9 @@
         <tbody>
             <% tasks.forEach(task => { %>
                 <tr id="task-row-<%= task.task_id %>">
-                    <td>
+                    <td class="checkbox-container">
                         <input type="checkbox" id="task-checkbox" data-taskId='<%= task.task_id %>' <% if (task.completed) { %> checked <% } %> autocomplete="off">
+                        <span class="checkmark"></span>
                     </td>
                     <td><%= task.title %></td>
                     <td><%= task.description %></td>
