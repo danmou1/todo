@@ -72,3 +72,8 @@
 - delete button now deletes the row on the client side after recieving a response from the DELETE endpoint.
 
 # 19/02/2024 9PM -> 12PM
+- trying to make sense of whatever I wrote and trying to implement the checkbox marking thing
+
+# 20/02/2024 9PM ->
+- fixed PUT request, now it filters null values from the query.
+- fixed checkboxes not being synchronized with the database.
