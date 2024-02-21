@@ -3,12 +3,14 @@
     font-family: sans-serif;
     --text-primary: #ffffff99;
     --text-secondary: #b6b6b6;
-    --bg-primary: #1d1d1d;
-    --bg-secondary: #141418;
+    --bg-primary: whitesmoke;
+    --bg-secondary:slategray;
+    --nav-primary:#04000c;
+    --nav-secondary: slategray;
 }
 
 body {
     margin: 0;
-    background-color: black;
-    color: white;
+    background-color: var(--bg-primary);
+    color: var(--bg-secondary);
 }

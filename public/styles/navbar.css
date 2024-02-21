@@ -1,31 +1,28 @@
 .navbar {
-    width: 8rem;
+    width: 12rem;
     height: 100%;
     position: fixed;
-    padding: 2rem;
-    background-color: var(--bg-primary);
+    top: 0;
+    left: 0;
+    background-color: var(--nav-primary);
 }
 
 .navbar-nav {
     list-style: none;
     padding: 0;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
 }
 
 .nav-item {
-    width: 100%;
-    padding: 1rem 2rem 1rem;
-    font-size: 1.5rem;
+    border-bottom: 1px solid var(--nav-secondary);
 }
-
 .nav-item a {
-    text-decoration: none;
     color: var(--text-primary);
+    font-size: 1.5rem;
+    text-decoration: none;
+    padding: 1rem 0 1rem 2rem;
+    display: block;
 }
-.nav-item:hover {
-    background-color: var(--bg-secondary);
+.nav-item a:hover {
+    background-color: var(--nav-secondary);
 }
