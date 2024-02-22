@@ -85,3 +85,6 @@
 - styling
 - todo: change priority to be in relation to the present tasks, instead of being a static value
 - todo: search bar
+
+# 22/02/2024 8PM ->
+-
