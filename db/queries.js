@@ -32,6 +32,16 @@ async function getCompleteTasks() {
     return result.rows;
 }
 
+async function getTodayTasks() {
+    const result = await client.query(`
+        SELECT
+            *,
+            to_char(due_date, 'DD-MM-YYYY') AS due_date
+        FROM tasks WHERE due_date = CURRENT_DATE;
+    `);
+    return result.rows;
+}
+
 async function createTask(taskData) {
     const { title, description, dueDate, priority } = taskData;
 
@@ -83,6 +93,7 @@ module.exports = {
     getTasks,
     getIncompleteTasks,
     getCompleteTasks,
+    getTodayTasks,
     createTask,
     updateTask,
     deleteTask,
