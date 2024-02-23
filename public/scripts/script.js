@@ -1,7 +1,42 @@
+const { query } = require("express");
+
 document.addEventListener('DOMContentLoaded', function() {
     const newTaskButton = document.getElementById('new-task-button');
     const formContainer = document.getElementById('form-container');
     const tasksContainer = document.getElementById('tasks-container');
+    const searchForm = document.getElementById('search-form');
+
+    searchForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        console.log('submit event started');
+
+        const searchInput = document.getElementById('search-input').value.trim();
+        
+        const dateRegex = /date:(\d{2}-\d{2}-\d{4})/;
+        const date = searchInput.match(dateRegex) ? searchInput.match(dateRegex)[1] : null;
+
+        const completedRegex = /completed:(true|false)/i;
+        const completed = searchInput.match(completedRegex) ? searchInput.match(completedRegex)[1] : null;
+
+        const searchQuery = searchInput.replace(dateRegex, '').replace(completedRegex, '').trim();
+
+        let queryString = 'tasks';;
+
+        if (searchQuery) {
+            queryString += `?q=${encodeURIComponent(searchQuery)}`;
+        }
+
+        if (date) {
+            queryString += `${searchQuery ? '&' : '?'}d=${encodeURIComponent(date)}`;
+        }
+
+        if (completed !== null ) {
+            queryString += `${searchQuery || date ? '&' : '?'}c=${completed}`;
+        }
+
+        window.location.href = queryString;
+    });
 
     newTaskButton.addEventListener('click', function () {
         formContainer.style.display = 'block';
