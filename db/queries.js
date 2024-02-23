@@ -9,6 +9,7 @@ async function getTasks(options = {}) {
         searchParams = null,
         isCompleted = null,
         dueToday = null, 
+        date = null,
     } = options;
 
     let query = `
@@ -17,8 +18,6 @@ async function getTasks(options = {}) {
             to_char(due_date, 'DD-MM-YYYY') AS due_date
         FROM tasks
     `;
-
-    console.log(isCompleted);
 
     const values = [];
 
