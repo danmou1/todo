@@ -2,43 +2,40 @@ const { getClient } = require('./connection');
 
 const client = getClient();
 
-async function getTasks() {
-    const result = await client.query(`
+async function getTasks(options = {}) {
+    // todo: implement search by multiple parameters
+
+    const {
+        searchParams = null,
+        isCompleted = null,
+        dueToday = null, 
+    } = options;
+
+    let query = `
         SELECT
             *,
             to_char(due_date, 'DD-MM-YYYY') AS due_date
         FROM tasks
-    `);
-    return result.rows;
-}
+    `;
 
-async function getIncompleteTasks() {
-    const result = await client.query(`
-        SELECT
-            *,
-            to_char(due_date, 'DD-MM-YYYY') AS due_date
-        FROM tasks WHERE completed IS FALSE
-    `);
-    return result.rows;
-}
+    console.log(isCompleted);
 
-async function getCompleteTasks() {
-    const result = await client.query(`
-        SELECT
-            *,
-            to_char(due_date, 'DD-MM-YYYY') AS due_date
-        FROM tasks WHERE completed IS TRUE
-    `);
-    return result.rows;
-}
+    const values = [];
 
-async function getTodayTasks() {
-    const result = await client.query(`
-        SELECT
-            *,
-            to_char(due_date, 'DD-MM-YYYY') AS due_date
-        FROM tasks WHERE due_date = CURRENT_DATE;
-    `);
+    if (searchParams) {
+        query += 'WHERE title ILIKE $1';
+        values.push(`%${searchParams}%`);
+    }
+
+    if (isCompleted !== null) {
+        query +=  `WHERE completed IS ${isCompleted}`;
+    }
+
+    if (dueToday) {
+        query += `WHERE due_date = CURRENT_DATE`;
+    }
+
+    const result = await client.query(query, values);
     return result.rows;
 }
 
@@ -91,9 +88,6 @@ async function deleteTask(taskId) {
 
 module.exports = {
     getTasks,
-    getIncompleteTasks,
-    getCompleteTasks,
-    getTodayTasks,
     createTask,
     updateTask,
     deleteTask,

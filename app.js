@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
-const { getTasks, getIncompleteTasks, getCompleteTasks, createTask, updateTask, deleteTask, getTodayTasks } = require('./db/queries');
+const { getTasks, createTask, updateTask, deleteTask, getTodayTasks } = require('./db/queries');
 
 const app = express();
 const port = 3000;
@@ -46,7 +46,7 @@ function setupRoutes() {
 
     app.get('/app/tasks/incomplete', async (req, res) => {
         try {
-            const tasks = await getIncompleteTasks();
+            const tasks = await getTasks({ isCompleted: false });
             res.render('layout', { pageTitle: 'Incomplete Tasks', tasks });
         } catch (error) {
             handleRouteError(res, error);
@@ -55,7 +55,7 @@ function setupRoutes() {
     
     app.get('/app/tasks/completed', async (req, res) => {
         try {
-            const tasks = await getCompleteTasks();
+            const tasks = await getTasks({ isCompleted: true });
             res.render('layout', { pageTitle: 'Completed Tasks', tasks });
         } catch (error) {
             handleRouteError(res, error);
@@ -64,7 +64,7 @@ function setupRoutes() {
 
     app.get('/app/tasks/today', async (req ,res) => {
         try {
-            const tasks = await getTodayTasks();
+            const tasks = await getTasks({ dueToday: true });
             res.render('layout', { pageTitle: `Today's Tasks`, tasks });
         } catch (error) {
             handleRouteError(res, error);
