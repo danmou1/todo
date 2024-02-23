@@ -89,3 +89,6 @@
 # 22/02/2024 8PM -> 11PM
 - spend a whole 2 hours trying to style the history and archive containers to be in the bottom part, didn't achieve anything
 - implemented today button
+
+# 23/02/2024 4PM -> 7PM
+- refactoring and trying to implement search function, have yet to fix queries and some routing issues
