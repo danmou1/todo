@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
-const { getTasks, getIncompleteTasks, getCompleteTasks, createTask, updateTask, deleteTask } = require('./db/queries');
+const { getTasks, getIncompleteTasks, getCompleteTasks, createTask, updateTask, deleteTask, getTodayTasks } = require('./db/queries');
 
 const app = express();
 const port = 3000;
@@ -57,6 +57,15 @@ function setupRoutes() {
         try {
             const tasks = await getCompleteTasks();
             res.render('layout', { pageTitle: 'Completed Tasks', tasks });
+        } catch (error) {
+            handleRouteError(res, error);
+        }
+    });
+
+    app.get('/app/tasks/today', async (req ,res) => {
+        try {
+            const tasks = await getTodayTasks();
+            res.render('layout', { pageTitle: `Today's Tasks`, tasks });
         } catch (error) {
             handleRouteError(res, error);
         }
