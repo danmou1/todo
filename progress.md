@@ -92,3 +92,7 @@
 
 # 23/02/2024 4PM -> 7PM
 - refactoring and trying to implement search function, have yet to fix queries and some routing issues
+
+# 26/02/2024 22PM ->
+- working on login system and ignoring everything else for now.
+- corrupted local repo, had to spend time fixing it
