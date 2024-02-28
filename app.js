@@ -37,24 +37,22 @@ function setupRoutes() {
 
     app.route('/register')
         .get((req, res) => {
-            try {
-                res.render('login');
-            } catch (error) {
-                handleRouteError(res, error);
-            }
+            res.render('register')
         })
         .post(async (req, res) => {
             try {
                 const { username, password } = req.body;
                 await addUser(username, password);
+                res.redirect('/login');
             } catch (error) {
                 if (error.code === '23505') {
-                    res.status(400).json({ message: 'Username already exists' });
+                    const errorMessage = 'Username already exists';
+                    res.render('register', { error: errorMessage });
                 } else {
                     handleRouteError(res, error);
                 }
             }
-        })
+        });
 
     app.route('/app/tasks')
         .get(async (req, res) => {
