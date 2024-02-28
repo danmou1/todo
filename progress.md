@@ -96,3 +96,6 @@
 # 26/02/2024 22PM -> 0:30AM
 - working on login system and ignoring everything else for now.
 - corrupted local repo, had to spend time fixing it
+
+# 27/02/2024 21PM
+- implemented registering, queries and back end logic seem alright. need to fix endpoints
