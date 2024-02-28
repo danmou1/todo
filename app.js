@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
-const { getTasks, createTask, updateTask, deleteTask} = require('./db/queries');
+const { getTasks, createTask, updateTask, deleteTask, addUser} = require('./db/queries');
 
 const app = express();
 const port = 3000;
@@ -25,7 +25,7 @@ async function startServer() {
             console.log(`Server is running on http://localhost:${port}`);
         });
     } catch (error) {
-        console.error('Error initializing database:', error.message);
+        console.error('Error initializing database:', error);
         process.exit(1);
     }
 }
@@ -35,22 +35,74 @@ function setupRoutes() {
         res.send('Root');
     });
 
-    app.get('/app/tasks', async (req, res) => {
-        try {
-            const {
-                q: searchParams,
-                d: date,
-                c: isCompleted
-            } = req.query;
-        
-            const tasks = await getTasks(searchParams, date, isCompleted);
+    app.route('/register')
+        .get((req, res) => {
+            try {
+                res.render('login');
+            } catch (error) {
+                handleRouteError(res, error);
+            }
+        })
+        .post(async (req, res) => {
+            try {
+                const { username, password } = req.body;
+                await addUser(username, password);
+            } catch (error) {
+                if (error.code === '23505') {
+                    res.status(400).json({ message: 'Username already exists' });
+                } else {
+                    handleRouteError(res, error);
+                }
+            }
+        })
 
-            res.render('layout', { pageTitle: 'Tasks', tasks });
-        } catch (error) {
-            handleRouteError(res, error)
-        }
-    });
+    app.route('/app/tasks')
+        .get(async (req, res) => {
+            try {
+                const {
+                    q: searchParams,
+                    d: date,
+                    c: isCompleted
+                } = req.query;
+                
+                const tasks = await getTasks(searchParams, date, isCompleted);
+                
+                res.render('layout', { pageTitle: 'Tasks', tasks });
+            } catch (error) {
+                handleRouteError(res, error);
+            }
+        })
+        .post(async (req, res) => {
+            try {
+                await createTask(req.body);
+                res.redirect('/app/tasks');
+            } catch (error) {
+                handleRouteError(res, error);
+            }
+        });
 
+    app.route('/app/tasks/:taskId')
+        .put(async (req, res) => {
+            const { taskId } = req.params;
+
+            try {
+                await updateTask(taskId, req.body);
+                res.redirect('app/tasks');
+            } catch (error) {
+                handleRouteError(res, error);
+            }
+        })
+        .delete(async (req, res) => {
+            const { taskId } = req.params;
+
+            try {
+                await deleteTask(taskId);
+                res.status(200).send({ success: true });
+            } catch (error) {
+                res.status(500).send({ success: false, error: "Internal server error" });
+            }
+        });
+            
     app.get('/app/tasks/incomplete', async (req, res) => {
         try {
             const tasks = await getTasks({ isCompleted: false });
@@ -59,7 +111,7 @@ function setupRoutes() {
             handleRouteError(res, error);
         }
     });
-    
+            
     app.get('/app/tasks/completed', async (req, res) => {
         try {
             const tasks = await getTasks({ isCompleted: true });
@@ -68,44 +120,13 @@ function setupRoutes() {
             handleRouteError(res, error);
         }
     });
-
+            
     app.get('/app/tasks/today', async (req ,res) => {
         try {
             const tasks = await getTasks({ dueToday: true });
             res.render('layout', { pageTitle: `Today's Tasks`, tasks });
         } catch (error) {
             handleRouteError(res, error);
-        }
-    });
-
-    app.post('/app/tasks', async (req, res) => {
-        try {
-            await createTask(req.body);
-            res.redirect('/app/tasks');
-        } catch (error) {
-            handleRouteError(res, error);
-        }
-    });
-
-    app.put('/app/tasks/:taskId', async (req, res) => {
-        const { taskId } = req.params;
-
-        try {
-            await updateTask(taskId, req.body);
-            res.redirect('app/tasks');
-        } catch (error) {
-            handleRouteError(res, error);
-        }
-    });
-
-    app.delete('/app/tasks/:taskId', async (req, res) => {
-        const { taskId } = req.params;
-
-        try {
-            await deleteTask(taskId);
-            res.status(200).send({ success: true });
-        } catch (error) {
-            res.status(500).send({ success: false, error: "Internal server error" });
         }
     });
 }
