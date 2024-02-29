@@ -1,8 +1,3 @@
-function parse(date) {
-    const d = new Date(date);
-    return `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`
-};
-
 document.addEventListener('DOMContentLoaded', function() {
     const newTaskButton = document.getElementById('new-task-button');
     const formContainer = document.getElementById('form-container');
@@ -101,9 +96,4 @@ async function deleteTask(taskId, title) {
     } catch (error) {
         console.error("Error:", error);
     }
-};
-
-function parseDate(date) {
-    const d = new Date(date);
-    return `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`
 };
