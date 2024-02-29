@@ -20,7 +20,7 @@
                     </td>
                     <td><%= task.title %></td>
                     <td><%= task.description %></td>
-                    <td><%= task.due_date %></td>
+                    <td><%= task.due_date.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', dateStyle: 'short' }) %></td>
                     <td><%= task.priority %></td>
                     <td>
                         <input type="button" value="Delete" class="delete-button" onclick="deleteTask('<%= task.task_id %>', '<%= task.title %>')" />
