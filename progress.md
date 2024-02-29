@@ -105,3 +105,5 @@
 - optimized routes
 - experimenting with express middlewares
 - for some reason front end date parsing isn't working because EJS does not recognize a DEFINED function, and this is totally my fault but I don't know why
+
+# 29/02/2024 18:00 ->
