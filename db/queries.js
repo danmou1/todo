@@ -13,12 +13,7 @@ async function getTasks(options = {}) {
         date = null,
     } = options;
 
-    let query = `
-        SELECT
-            *,
-            to_char(due_date, 'DD-MM-YYYY') AS due_date
-        FROM tasks
-    `;
+    let query = `SELECT * FROM tasks`;
 
     const values = [];
 
@@ -87,7 +82,6 @@ async function deleteTask(taskId) {
 }
 
 async function addUser(username, password) {
-    try {
     const hash = crypto.createHash('sha256');
     hash.update(password);
 
@@ -96,13 +90,6 @@ async function addUser(username, password) {
     await client.query('INSERT INTO users (username, password_hash) VALUES ($1, $2)', [username, hashedPassword]);
 
     console.log('User added successfully');
-    } catch (error) {
-        if (error.code === '23505') {
-            console.error('Error adding user: Username already exists');
-        } else {
-            console.error('Error adding user:', error);
-        }
-    }
 }
 
 module.exports = {
