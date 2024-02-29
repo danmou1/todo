@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
 const { getTasks, createTask, updateTask, deleteTask, addUser} = require('./db/queries');
@@ -9,9 +8,6 @@ const port = 3000;
 
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 
 async function startServer() {
     try {
@@ -113,7 +109,7 @@ app.use((err, req, res, next) => {
     if (err.code === '23505') {
         res.status(400).render('register', { error: 'Username already exists' });
     } else {
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).render({ error: 'Internal server error' });
     }
 });
 
