@@ -109,7 +109,7 @@ app.use((err, req, res, next) => {
     if (err.code === '23505') {
         res.status(400).render('register', { error: 'Username already exists' });
     } else {
-        res.status(500).render({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
