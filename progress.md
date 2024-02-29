@@ -107,3 +107,4 @@
 - for some reason front end date parsing isn't working because EJS does not recognize a DEFINED function, and this is totally my fault but I don't know why
 
 # 29/02/2024 18:00 ->
+- being confused by EJS, left the date rendering method on the server instead of the client side. will make timezone flexible eventually.
