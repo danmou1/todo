@@ -97,5 +97,11 @@
 - working on login system and ignoring everything else for now.
 - corrupted local repo, had to spend time fixing it
 
-# 27/02/2024 21PM
+# 27/02/2024 21PM -> 00AM
 - implemented registering, queries and back end logic seem alright. need to fix endpoints
+
+# 28/02/2024 21:00 -> 
+- fixed registration error handling
+- optimized routes
+- experimenting with express middlewares
+- for some reason front end date parsing isn't working because EJS does not recognize a DEFINED function, and this is totally my fault but I don't know why
