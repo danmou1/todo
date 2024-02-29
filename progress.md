@@ -108,3 +108,4 @@
 
 # 29/02/2024 18:00 ->
 - being confused by EJS, left the date rendering method on the server instead of the client side. will make timezone flexible eventually.
+- bugfixing
