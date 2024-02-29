@@ -100,7 +100,7 @@
 # 27/02/2024 21PM -> 00AM
 - implemented registering, queries and back end logic seem alright. need to fix endpoints
 
-# 28/02/2024 21:00 -> 
+# 28/02/2024 21:00 -> 00:00
 - fixed registration error handling
 - optimized routes
 - experimenting with express middlewares
