@@ -9,7 +9,6 @@ const port = 3000;
 
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
-app.use(express.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -32,65 +31,50 @@ async function startServer() {
 
 function setupRoutes() {
     app.get('/', (req, res) => {
-        res.send('Root');
+        res.redirect('/login');
     });
+
+    app.route('/login')
+        .get((req, res) => {
+            res.render('login');
+        })
 
     app.route('/register')
         .get((req, res) => {
-            res.render('register')
+            res.render('register', { error: null });
         })
-        .post(async (req, res) => {
-            try {
-                const { username, password } = req.body;
-                await addUser(username, password);
-                res.redirect('/login');
-            } catch (error) {
-                if (error.code === '23505') {
-                    const errorMessage = 'Username already exists';
-                    res.render('register', { error: errorMessage });
-                } else {
-                    handleRouteError(res, error);
-                }
-            }
-        });
+        .post(async (req, res, next) => {
+            const { username, password } = req.body;
+            await addUser(username, password);
+
+            next();
+        })
 
     app.route('/app/tasks')
-        .get(async (req, res) => {
-            try {
-                const {
-                    q: searchParams,
-                    d: date,
-                    c: isCompleted
-                } = req.query;
-                
-                const tasks = await getTasks(searchParams, date, isCompleted);
-                
-                res.render('layout', { pageTitle: 'Tasks', tasks });
-            } catch (error) {
-                handleRouteError(res, error);
-            }
+        .get(async (req, res, next) => {
+            const { q: searchParams, d: date, c: isCompleted } = req.query;
+            const tasks = await getTasks(searchParams, date, isCompleted);
+            res.render('layout', { pageTitle: 'Tasks', tasks });
+
+            next();
         })
-        .post(async (req, res) => {
-            try {
-                await createTask(req.body);
-                res.redirect('/app/tasks');
-            } catch (error) {
-                handleRouteError(res, error);
-            }
+        .post(async (req, res, next) => {
+            await createTask(req.body);
+            res.redirect('/app/tasks');
+
+            next();
         });
 
     app.route('/app/tasks/:taskId')
-        .put(async (req, res) => {
+        .put(async (req, res, next) => {
             const { taskId } = req.params;
 
-            try {
-                await updateTask(taskId, req.body);
-                res.redirect('app/tasks');
-            } catch (error) {
-                handleRouteError(res, error);
-            }
+            await updateTask(taskId, req.body);
+            res.redirect('/app/tasks');
+
+            next();
         })
-        .delete(async (req, res) => {
+        .delete(async (req, res, next) => {
             const { taskId } = req.params;
 
             try {
@@ -101,38 +85,37 @@ function setupRoutes() {
             }
         });
             
-    app.get('/app/tasks/incomplete', async (req, res) => {
-        try {
-            const tasks = await getTasks({ isCompleted: false });
-            res.render('layout', { pageTitle: 'Incomplete Tasks', tasks });
-        } catch (error) {
-            handleRouteError(res, error);
-        }
+    app.get('/app/tasks/incomplete', async (req, res, next) => {
+        const tasks = await getTasks({ isCompleted: false });
+        res.render('layout', { pageTitle: 'Incomplete Tasks', tasks });
+
+        next();
     });
             
-    app.get('/app/tasks/completed', async (req, res) => {
-        try {
-            const tasks = await getTasks({ isCompleted: true });
-            res.render('layout', { pageTitle: 'Completed Tasks', tasks });
-        } catch (error) {
-            handleRouteError(res, error);
-        }
+    app.get('/app/tasks/completed', async (req, res, next) => {
+        const tasks = await getTasks({ isCompleted: true });
+        res.render('layout', { pageTitle: 'Completed Tasks', tasks });
+
+        next();
     });
             
-    app.get('/app/tasks/today', async (req ,res) => {
-        try {
-            const tasks = await getTasks({ dueToday: true });
-            res.render('layout', { pageTitle: `Today's Tasks`, tasks });
-        } catch (error) {
-            handleRouteError(res, error);
-        }
+    app.get('/app/tasks/today', async (req, res, next) => {
+        const tasks = await getTasks({ dueToday: true });
+        res.render('layout', { pageTitle: `Today's Tasks`, tasks });
+
+        next();
     });
+
 }
 
-function handleRouteError(res, error) {
-    console.error('Route Error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-}
+app.use((err, req, res, next) => {
+    console.error(err);
+    if (err.code === '23505') {
+        res.status(400).render('register', { error: 'Username already exists' });
+    } else {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 process.on('SIGINT', () => {
     closeDatabaseConnection().finally(() => {
