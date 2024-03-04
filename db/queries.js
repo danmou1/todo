@@ -1,7 +1,17 @@
-const crypto = require('crypto');
 const { getClient } = require('./connection');
+const crypto = require('crypto');
+const userAuth = require('./userAuth');
 
 const client = getClient();
+
+function scrypt (password, salt, keylen) {
+    return new Promise((resolve, reject) => {
+        crypto.scrypt(password, salt, keylen, (err, derivedKey) => {
+            if (err) reject(err);
+            else resolve(derivedKey.toString('hex'));
+        });
+    });
+};
 
 async function getTasks(options = {}) {
     const {
@@ -17,17 +27,17 @@ async function getTasks(options = {}) {
     if (searchParams) {
         query += ' WHERE title ILIKE $1';
         values.push(`%${searchParams}%`);
-    }
+    };;
 
     if (isCompleted !== null) {
         query += values.length ? ' AND' : ' WHERE'; 
         query += ` completed IS ${isCompleted}`;
-    }
+    };
 
     if (dueToday) {
         query += values.length ? ' AND' : ' WHERE';
         query += ` due_date = CURRENT_DATE`;
-    }
+    };
 
     try {
         const result = await client.query(query, values);
@@ -35,7 +45,7 @@ async function getTasks(options = {}) {
     } catch (error) {
         console.error('Error fetching tasks:', error);
     };
-}
+};
 
 async function createTask(taskData) {
     const { title, description, dueDate, priority } = taskData;
@@ -49,9 +59,8 @@ async function createTask(taskData) {
         console.error('Error inserting task:', error);
         return Promise.reject(error);
     });
-}
+};
 
-// overwrites all fields
 async function updateTask(taskId, taskData) {
     const updates = [];
     const params = [];
@@ -78,7 +87,7 @@ async function updateTask(taskId, taskData) {
         console.error('Error updating task:', error);
         return Promise.reject(error);
     });
-}
+};
 
 async function deleteTask(taskId) {
     await client.query('DELETE FROM tasks WHERE task_id = $1', [taskId])
@@ -86,23 +95,21 @@ async function deleteTask(taskId) {
         console.error('Error deleting task:', error);
         return Promise.reject(error);
     });
-}
+};
 
 async function addUser(username, password) {
-    const hash = crypto.createHash('sha256');
-    hash.update(password);
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hashedPassword = await scrypt(password, salt, 64);
 
-    const hashedPassword = hash.digest('hex');
-
-    return client.query('INSERT INTO users (username, password_hash) VALUES ($1, $2)', [username, hashedPassword])
-    .then(() => {
-        console.log('User added successfully');
-    })
-    .catch(error => {
-        console.error('Error adding user:', error);
-        return Promise.reject(error);
-    });
-}
+    return client.query('INSERT INTO users (username, password_hash, salt) VALUES ($1, $2, $3)', [username, hashedPassword, salt])
+        .then(() => {
+            console.log('User added successfully');
+        })
+        .catch(error => {
+            console.error('Error adding user:', error);
+            throw error;
+        });
+};
 
 module.exports = {
     getTasks,
