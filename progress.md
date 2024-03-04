@@ -110,4 +110,7 @@
 - being confused by EJS, left the date rendering method on the server instead of the client side. will make timezone flexible eventually.
 - bugfixing
 
-03/03/2024 21:00
+# 03/03/2024 21:00
+- using node scrypt for db security (idk if it's implemented correctly);
+- yet to add session tokens using JWT
+- yet to implement the login page
