@@ -8,6 +8,7 @@ const port = 3000;
 
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
+app.use(express.json());
 
 async function startServer() {
     try {
@@ -42,8 +43,6 @@ function setupRoutes() {
         .post(async (req, res, next) => {
             const { username, password } = req.body;
             await addUser(username, password);
-
-            next();
         })
 
     app.route('/app/tasks')
@@ -51,24 +50,17 @@ function setupRoutes() {
             const { q: searchParams, d: date, c: isCompleted } = req.query;
             const tasks = await getTasks(searchParams, date, isCompleted);
             res.render('layout', { pageTitle: 'Tasks', tasks });
-
-            next();
         })
         .post(async (req, res, next) => {
             await createTask(req.body);
             res.redirect('/app/tasks');
-
-            next();
         });
 
     app.route('/app/tasks/:taskId')
         .put(async (req, res, next) => {
             const { taskId } = req.params;
-
             await updateTask(taskId, req.body);
             res.redirect('/app/tasks');
-
-            next();
         })
         .delete(async (req, res, next) => {
             const { taskId } = req.params;
@@ -84,37 +76,32 @@ function setupRoutes() {
     app.get('/app/tasks/incomplete', async (req, res, next) => {
         const tasks = await getTasks({ isCompleted: false });
         res.render('layout', { pageTitle: 'Incomplete Tasks', tasks });
-
-        next();
     });
             
     app.get('/app/tasks/completed', async (req, res, next) => {
         const tasks = await getTasks({ isCompleted: true });
         res.render('layout', { pageTitle: 'Completed Tasks', tasks });
-
-        next();
     });
             
     app.get('/app/tasks/today', async (req, res, next) => {
         const tasks = await getTasks({ dueToday: true });
         res.render('layout', { pageTitle: `Today's Tasks`, tasks });
-
-        next();
     });
 
+    app.use((err, req, res, next) => {
+        console.error(err);
+        if (err.code === '23505') {
+            res.status(400).render('register', { error: 'Username already exists' });
+        } else {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
 }
 
-app.use((err, req, res, next) => {
-    console.error(err);
-    if (err.code === '23505') {
-        res.status(400).render('register', { error: 'Username already exists' });
-    } else {
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
 
 process.on('SIGINT', () => {
     closeDatabaseConnection().finally(() => {
+        console.log('Shutting down server...')
         process.exit(0);
     });
 });
