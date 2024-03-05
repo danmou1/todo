@@ -119,3 +119,8 @@
 - added two dependencies, dotenv and jsonwebtoken.
 - implemented both of them, have yet to test them.
 - register/login is broken atm, will fix tomorrow
+
+# 05/03/2024 19:00
+- todo: uAuth client side checks
+- implemented session tokens (unused for now)
+- uAuth is now working
