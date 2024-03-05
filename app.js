@@ -1,7 +1,9 @@
 const express = require('express');
+require('dotenv').config();
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
 const { getTasks, createTask, updateTask, deleteTask, addUser} = require('./db/queries');
+const { userAuth, verifyToken } = require('./db/userAuth')
 
 const app = express();
 const port = 3000;
@@ -35,6 +37,18 @@ function setupRoutes() {
         .get((req, res) => {
             res.render('login');
         })
+        .post(async (req, res) => {
+            const { username, password } = req.body;
+            console.log(username, password);
+
+            const authResult = await userAuth(username, password);
+            if (authResult) {
+                const { sessionToken } = authResult;
+                res.status(200).json({ sessionToken });
+            } else {
+                res.status(401).json({ error: 'Invalid credentials.' });
+            }
+        })
 
     app.route('/register')
         .get((req, res) => {
@@ -46,23 +60,23 @@ function setupRoutes() {
         })
 
     app.route('/app/tasks')
-        .get(async (req, res, next) => {
+        .get(async (req, res) => {
             const { q: searchParams, d: date, c: isCompleted } = req.query;
             const tasks = await getTasks(searchParams, date, isCompleted);
             res.render('layout', { pageTitle: 'Tasks', tasks });
         })
-        .post(async (req, res, next) => {
+        .post(async (req, res) => {
             await createTask(req.body);
             res.redirect('/app/tasks');
         });
 
     app.route('/app/tasks/:taskId')
-        .put(async (req, res, next) => {
+        .put(async (req, res) => {
             const { taskId } = req.params;
             await updateTask(taskId, req.body);
             res.redirect('/app/tasks');
         })
-        .delete(async (req, res, next) => {
+        .delete(async (req, res) => {
             const { taskId } = req.params;
 
             try {
@@ -73,22 +87,22 @@ function setupRoutes() {
             }
         });
             
-    app.get('/app/tasks/incomplete', async (req, res, next) => {
+    app.get('/app/tasks/incomplete', async (req, res) => {
         const tasks = await getTasks({ isCompleted: false });
         res.render('layout', { pageTitle: 'Incomplete Tasks', tasks });
     });
             
-    app.get('/app/tasks/completed', async (req, res, next) => {
+    app.get('/app/tasks/completed', async (req, res) => {
         const tasks = await getTasks({ isCompleted: true });
         res.render('layout', { pageTitle: 'Completed Tasks', tasks });
     });
             
-    app.get('/app/tasks/today', async (req, res, next) => {
+    app.get('/app/tasks/today', async (req, res) => {
         const tasks = await getTasks({ dueToday: true });
         res.render('layout', { pageTitle: `Today's Tasks`, tasks });
     });
 
-    app.use((err, req, res, next) => {
+    app.use((err, req, res) => {
         console.error(err);
         if (err.code === '23505') {
             res.status(400).render('register', { error: 'Username already exists' });
