@@ -20,20 +20,20 @@ function verifyToken(token) {
 }
 
 async function userAuth(username, password) {
-    const result = await client.query('SELECT * FROM users WHERE username = $1', [username]);
-    const user = result.rows[0];
+    try {
+        const result = await client.query('SELECT * FROM users WHERE username = $1', [username]);
+        const user = result.rows[0];
 
-    if (!user || !verifyPassword(password, user.password_hash, user.salt)) {
-        return null;
-    }
-
-    const sessionToken = generateToken({ userId: user.user_id, username: user.username});
-
-    return { user, sessionToken }
-    .catch(error => {
+        if (!user || !verifyPassword(password, user.password_hash, user.salt)) {
+            return null;
+        }    
+        const sessionToken = generateToken({ userId: user.user_id, username: user.username});
+        
+        return { user, sessionToken }
+    } catch (err) {
         console.error('uAuth error:', error);
-        throw error;
-    })
+        throw err;
+    }
 };
 
 function verifyPassword(password, hashedPassword, salt) {
