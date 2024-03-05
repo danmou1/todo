@@ -98,17 +98,14 @@ async function deleteTask(taskId) {
 };
 
 async function addUser(username, password) {
-    const salt = crypto.randomBytes(16).toString('hex');
-    const hashedPassword = await scrypt(password, salt, 64);
+    try {
+        const salt = crypto.randomBytes(16).toString('hex');
+        const hashedPassword = await scrypt(password, salt, 64)
 
-    return client.query('INSERT INTO users (username, password_hash, salt) VALUES ($1, $2, $3)', [username, hashedPassword, salt])
-        .then(() => {
-            console.log('User added successfully');
-        })
-        .catch(error => {
-            console.error('Error adding user:', error);
-            throw error;
-        });
+        return client.query('INSERT INTO users (username, password_hash, salt) VALUES ($1, $2, $3)', [username, hashedPassword, salt])
+    } catch (err) {
+        console.log(err);
+    }
 };
 
 module.exports = {
