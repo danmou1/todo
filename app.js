@@ -39,9 +39,8 @@ function setupRoutes() {
         })
         .post(async (req, res) => {
             const { username, password } = req.body;
-            console.log(username, password);
-
             const authResult = await userAuth(username, password);
+
             if (authResult) {
                 const { sessionToken } = authResult;
                 res.status(200).json({ sessionToken });
@@ -56,7 +55,8 @@ function setupRoutes() {
         })
         .post(async (req, res, next) => {
             const { username, password } = req.body;
-            await addUser(username, password);
+            addUser(username, password)
+                .then(() => res.status(200).send({ success: true }))
         })
 
     app.route('/app/tasks')
@@ -102,7 +102,7 @@ function setupRoutes() {
         res.render('layout', { pageTitle: `Today's Tasks`, tasks });
     });
 
-    app.use((err, req, res) => {
+    app.use((err, req, res, next) => {
         console.error(err);
         if (err.code === '23505') {
             res.status(400).render('register', { error: 'Username already exists' });
