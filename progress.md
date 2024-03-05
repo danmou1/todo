@@ -114,3 +114,8 @@
 - using node scrypt for db security (idk if it's implemented correctly);
 - yet to add session tokens using JWT
 - yet to implement the login page
+
+# 04/03/2024 21:00
+- added two dependencies, dotenv and jsonwebtoken.
+- implemented both of them, have yet to test them.
+- register/login is broken atm, will fix tomorrow
