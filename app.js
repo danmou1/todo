@@ -63,6 +63,7 @@ function setupRoutes() {
         .get(async (req, res) => {
             const { q: searchParams, d: date, c: isCompleted } = req.query;
             const tasks = await getTasks(searchParams, date, isCompleted);
+            console.log(req.headers.authorization);
             res.render('layout', { pageTitle: 'Tasks', tasks });
         })
         .post(async (req, res) => {
