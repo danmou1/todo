@@ -124,3 +124,4 @@
 - todo: uAuth client side checks
 - implemented session tokens (unused for now)
 - uAuth is now working
+- lost on how to deal with tokens, will do tomorrow. probably some cors issue
