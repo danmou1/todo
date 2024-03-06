@@ -17,7 +17,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
             const { sessionToken: token} = await response.json();
             sessionStorage.setItem('token', token);
 
-            window.location.href = '/app/tasks';
+            window.location.href = '/app/tasks'
         } else {
             const { error } = await response.json();
             console.log(error);
