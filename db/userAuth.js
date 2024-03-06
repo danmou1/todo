@@ -10,13 +10,21 @@ function generateToken(payload) {
     return jwt.sign(payload, secretKey, { expiresIn: '1h' });
 }
 
-function verifyToken(token) {
-    try {
-        const decoded = jwt.verify(token, secretKey);
-        return decoded;
-    } catch (error) {
-        throw new Error('Invalid token');
+function verifyToken(req, res, next) {
+    const token = req.headers.authorization;
+
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
     }
+
+    jwt.verify(token, secretKey, (err, decoded) => {
+        if (err) {
+            return res.status(400).json({ error: 'Failed to authenticate token '});
+        }
+
+        req.user = decoded;
+        next();
+    });
 }
 
 async function userAuth(username, password) {
@@ -28,7 +36,7 @@ async function userAuth(username, password) {
             return null;
         }    
         const sessionToken = generateToken({ userId: user.user_id, username: user.username});
-        
+
         return { user, sessionToken }
     } catch (err) {
         console.error('uAuth error:', error);
