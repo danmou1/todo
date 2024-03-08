@@ -10,14 +10,14 @@ function generateToken(payload) {
     return jwt.sign(payload, secretKey, { expiresIn: '1h' });
 }
 
-function verifyToken(req, res, next) {
+async function verifyToken(req, res, next) {
     const token = req.cookies.token;
 
     if (!token) {
         return res.redirect('/login');
     }
 
-    jwt.verify(token, secretKey, (err, decoded) => {
+    jwt.verify(token, secretKey, async (err, decoded) => {
         if (err) {
             return res.status(403).json({ error: 'Forbidden: Invalid token'});
         }
