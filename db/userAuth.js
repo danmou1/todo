@@ -11,17 +11,16 @@ function generateToken(payload) {
 }
 
 function verifyToken(req, res, next) {
-    const token = req.headers.authorization;
+    const token = req.cookies.token;
 
     if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
+        return res.redirect('/login');
     }
 
     jwt.verify(token, secretKey, (err, decoded) => {
         if (err) {
-            return res.status(400).json({ error: 'Failed to authenticate token '});
+            return res.status(403).json({ error: 'Forbidden: Invalid token'});
         }
-
         req.user = decoded;
         next();
     });
@@ -35,9 +34,9 @@ async function userAuth(username, password) {
         if (!user || !verifyPassword(password, user.password_hash, user.salt)) {
             return null;
         }    
-        const sessionToken = generateToken({ userId: user.user_id, username: user.username});
+        const token = generateToken({ userId: user.user_id, username: user.username});
 
-        return { user, sessionToken }
+        return { user, token }
     } catch (err) {
         console.error('uAuth error:', error);
         throw err;
