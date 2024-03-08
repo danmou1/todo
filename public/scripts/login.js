@@ -14,14 +14,9 @@ document.getElementById('login-form').addEventListener('submit', async function(
         });
 
         if (response.ok) {
-            const { sessionToken: token} = await response.json();
-            sessionStorage.setItem('token', token);
-
             window.location.href = '/app/tasks'
         } else {
             const { error } = await response.json();
-            console.log(error);
-            console.error('Login error:', error);
 
             const errorElement = document.getElementById('login-error');
             errorElement.textContent = error;
