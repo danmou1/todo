@@ -120,8 +120,12 @@
 - implemented both of them, have yet to test them.
 - register/login is broken atm, will fix tomorrow
 
-# 05/03/2024 19:00
+# 05/03/2024 19:00 -> 22:00
 - todo: uAuth client side checks
 - implemented session tokens (unused for now)
 - uAuth is now working
 - lost on how to deal with tokens, will do tomorrow. probably some cors issue
+
+# 07/03/2024 21:00 ->
+- dependancy added: "cookie-parser" middleware
+- cookie auth now working. eventually will have a 404 page.
