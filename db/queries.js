@@ -13,7 +13,7 @@ function scrypt (password, salt, keylen) {
     });
 };
 
-async function getTasks(options = {}) {
+async function getTasks(options = {}, user) {
     const {
         searchParams = null,
         isCompleted = null,
@@ -21,50 +21,87 @@ async function getTasks(options = {}) {
         date = null,
     } = options;
 
-    let query = `SELECT * FROM tasks`;
+    const {
+        userId = null,
+        role = null,
+    } = user;
+
+    let query = 'SELECT * FROM tasks';
     const values = [];
 
+    if (role === 'user') {
+        query += ' WHERE user_id = $1';
+        values.push(userId);
+    }
+
     if (searchParams) {
-        query += ' WHERE title ILIKE $1';
+        query += values.length ? ' AND' : ' WHERE';
+        query += ` title ILIKE $${values.length + 1}`;
         values.push(`%${searchParams}%`);
-    };;
+    }
 
     if (isCompleted !== null) {
         query += values.length ? ' AND' : ' WHERE'; 
-        query += ` completed IS ${isCompleted}`;
-    };
+        query += ` completed IS $${values.length + 1}`;
+        values.push(isCompleted);
+    }
 
     if (dueToday) {
         query += values.length ? ' AND' : ' WHERE';
         query += ` due_date = CURRENT_DATE`;
-    };
+    }
 
     try {
         const result = await client.query(query, values);
         return result.rows;
     } catch (error) {
         console.error('Error fetching tasks:', error);
-    };
+    }
 };
 
-async function createTask(taskData) {
-    const { title, description, dueDate, priority } = taskData;
+async function getUsers(user) {
+    if (user.role === 'admin') {
+        const result = await client.query('SELECT * FROM users');
+        return result.rows;
+    }
 
-    return client.query(
-        'INSERT INTO tasks VALUES (DEFAULT, $1, $2, $3, CURRENT_TIMESTAMP, $4) RETURNING *',
-        [title, description, dueDate, priority]
-    )
-    .then(result => result.rows[0])
-    .catch(error => {
-        console.error('Error inserting task:', error);
-        return Promise.reject(error);
-    });
+    throw new Error('Forbidden');
+}
+
+async function createTask(taskData, user) {
+    try {
+        const { title, description, dueDate, priority } = taskData;
+        const { userId } = user;
+
+        return client.query(
+            'INSERT INTO tasks VALUES (DEFAULT, $1, $2, $3, CURRENT_TIMESTAMP, $4, $5) RETURNING *',
+            [title, description, dueDate, priority, userId]
+        )
+    } catch (err) {
+        console.error('Error inserting task:', err);
+    }
 };
 
-async function updateTask(taskId, taskData) {
+async function updateTask(taskId, taskData, user) {
     const updates = [];
     const params = [];
-    
+
+    const { 
+        role = null,
+        userId = null,
+    } = user;
+
+    if (role === 'user') {
+        const getOwner = await client.query(
+            'SELECT user_id FROM tasks WHERE task_id = $1', [taskId]
+        );
+        const ownerId = getOwner.rows[0]?.user_id;
+
+        if (ownerId !== userId) {
+            throw new Error('Forbidden');
+        }
+    }
+
     Object.entries(taskData).forEach(([key, value]) => {
         if (key !== 'task_id' && value !== null && value !== undefined) {
             updates.push(`${key} = $${params.length + 1}`);
@@ -75,21 +112,36 @@ async function updateTask(taskId, taskData) {
 
     const setClause = updates.join(', ');
     
-    return client.query(
-        `UPDATE tasks SET ${setClause} WHERE task_id = $${params.length} RETURNING *`,
-        params
-    )
-    .then(result => {
-        console.log(`[${taskId}]: Updated task.`);
+    try {
+        const result = client.query(
+            `UPDATE tasks SET ${setClause} WHERE task_id = $${params.length} RETURNING *`,
+            params
+        )
+
+        console.log(`[${taskId}: Updated task.]`);
         return result.rows[0];
-    })  
-    .catch(error => {
-        console.error('Error updating task:', error);
-        return Promise.reject(error);
-    });
+    } catch (err) {
+        console.error('Error updating task:', err);
+    }
 };
 
-async function deleteTask(taskId) {
+async function deleteTask(taskId, user) {
+    const {
+        role = null,
+        userId = null,
+    } = user;
+
+    if (role === 'user') {
+        const getOwner = await client.query(
+            'SELECT user_id FROM tasks WHERE task_id = $1', [taskId]
+        );
+        const ownerId = getOwner.rows[0]?.user_id;
+
+        if (ownerId !== userId) {
+            throw new Error('Forbidden');
+        }
+    }
+
     await client.query('DELETE FROM tasks WHERE task_id = $1', [taskId])
     .catch(error => {
         console.error('Error deleting task:', error);
@@ -104,7 +156,7 @@ async function addUser(username, password) {
 
         return client.query('INSERT INTO users (username, password_hash, salt) VALUES ($1, $2, $3)', [username, hashedPassword, salt])
     } catch (err) {
-        console.log(err);
+        console.error('Error adding user:', err);
     }
 };
 
@@ -114,4 +166,5 @@ module.exports = {
     updateTask,
     deleteTask,
     addUser,
+    getUsers,
 };
