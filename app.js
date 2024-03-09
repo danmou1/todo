@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
 const { getTasks, createTask, updateTask, deleteTask, addUser} = require('./db/queries');
-const { userAuth, verifyToken } = require('./db/userAuth')
+const { userAuth, verifyToken, checkRole } = require('./db/userAuth')
 
 const cookieParser = require('cookie-parser');
 const app = express();
@@ -35,7 +35,9 @@ app.use((req, res, next) => {
         return next();
     }
 
-    verifyToken(req, res, next);
+    verifyToken(req, res, () => {
+        checkRole(req, res, next);
+    });
 });
 
 function setupRoutes() {
