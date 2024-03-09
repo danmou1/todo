@@ -130,3 +130,6 @@
 - dependancy added: "cookie-parser" middleware
 - cookie auth now working. eventually will have a 404 page.
 - too tired to figure out what to do for the user crud. idk if I create a debug endpoint, or if I make conditional queries. will decide tomorrow.
+
+# 08/03/2024 20:00 ->
+- admin/user CRUD queries are supposedly complete, yet to be tested.
