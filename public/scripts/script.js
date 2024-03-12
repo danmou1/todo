@@ -10,16 +10,13 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('submit event started');
 
         const searchInput = document.getElementById('search-input').value.trim();
-        
         const dateRegex = /date:(\d{2}-\d{2}-\d{4})/;
         const date = searchInput.match(dateRegex) ? searchInput.match(dateRegex)[1] : null;
-
         const completedRegex = /completed:(true|false)/i;
         const completed = searchInput.match(completedRegex) ? searchInput.match(completedRegex)[1] : null;
-
         const searchQuery = searchInput.replace(dateRegex, '').replace(completedRegex, '').trim();
 
-        let queryString = 'tasks';;
+        let queryString = 'tasks';
 
         if (searchQuery) {
             queryString += `?q=${encodeURIComponent(searchQuery)}`;
@@ -48,12 +45,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const isCompleted = this.checked;
         
             try {
-                await fetch(`/app/tasks/${taskId}`, {
+                await fetch(`/app/tasks`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ completed: isCompleted })
+                    body: JSON.stringify({ taskId, completed: isCompleted })
                 });
         
                 console.log('Task marked as completed');
@@ -74,11 +71,12 @@ async function deleteTask(taskId, title) {
     }
 
     try {
-        const response = await fetch(`/app/tasks/${taskId}`, {
+        const response = await fetch(`/app/tasks`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({ taskId })
         });
 
         if (response.ok) {
