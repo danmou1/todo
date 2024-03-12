@@ -25,7 +25,7 @@ async function getTasks(options = {}, user) {
         userId = null,
         role = null,
     } = user;
-
+    
     let query = 'SELECT * FROM tasks';
     const values = [];
 
@@ -34,6 +34,7 @@ async function getTasks(options = {}, user) {
         values.push(userId);
     }
 
+    // normal querying
     if (searchParams) {
         query += values.length ? ' AND' : ' WHERE';
         query += ` title ILIKE $${values.length + 1}`;
@@ -42,7 +43,7 @@ async function getTasks(options = {}, user) {
 
     if (isCompleted !== null) {
         query += values.length ? ' AND' : ' WHERE'; 
-        query += ` completed IS $${values.length + 1}`;
+        query += ` completed = $${values.length + 1}`;
         values.push(isCompleted);
     }
 
@@ -66,7 +67,7 @@ async function getUsers(user) {
     }
 
     throw new Error('Forbidden');
-}
+};
 
 async function createTask(taskData, user) {
     try {
@@ -95,7 +96,7 @@ async function updateTask(taskId, taskData, user) {
         const getOwner = await client.query(
             'SELECT user_id FROM tasks WHERE task_id = $1', [taskId]
         );
-        const ownerId = getOwner.rows[0]?.user_id;
+        const ownerId = getOwner.rows[0].user_id;
 
         if (ownerId !== userId) {
             throw new Error('Forbidden');
@@ -135,7 +136,7 @@ async function deleteTask(taskId, user) {
         const getOwner = await client.query(
             'SELECT user_id FROM tasks WHERE task_id = $1', [taskId]
         );
-        const ownerId = getOwner.rows[0]?.user_id;
+        const ownerId = getOwner.rows[0].user_id;
 
         if (ownerId !== userId) {
             throw new Error('Forbidden');
