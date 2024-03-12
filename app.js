@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
 const { getTasks, createTask, updateTask, deleteTask, addUser} = require('./db/queries');
-const { userAuth, verifyToken, checkRole } = require('./db/userAuth')
+const { userAuth, verifyToken, checkRole, authRole } = require('./db/userAuth')
 
 const cookieParser = require('cookie-parser');
 const app = express();
@@ -75,46 +75,36 @@ function setupRoutes() {
 
     app.route('/app/tasks')
         .get(async (req, res) => {
-            const { q: searchParams, d: date, c: isCompleted } = req.query;
-            const tasks = await getTasks(searchParams, date, isCompleted);
+            let { q: searchParams, d: date, c: isCompleted, t: dueToday } = req.query;
+
+            console.log(req.query);
+            const tasks = await getTasks({ searchParams, date, isCompleted }, req.user);
 
             res.render('layout', { pageTitle: 'Tasks', tasks });
         })
         .post(async (req, res) => {
-            await createTask(req.body);
+            await createTask(req.body, req.user);
             res.redirect('/app/tasks');
-        });
-
-    app.route('/app/tasks/:taskId')
+        })
         .put(async (req, res) => {
-            const { taskId } = req.params;
-            await updateTask(taskId, req.body);
+            const { taskId } = req.body;
+
+            await updateTask(taskId, req.user);
             res.redirect('/app/tasks');
         })
         .delete(async (req, res) => {
-            const { taskId } = req.params;
+            const { taskId } = req.body;
 
             try {
-                await deleteTask(taskId);
+                await deleteTask(taskId, req.user);
                 res.status(200).send({ success: true });
             } catch (error) {
                 res.status(500).send({ success: false, error: "Internal server error" });
             }
         });
-            
-    app.get('/app/tasks/incomplete', async (req, res) => {
-        const tasks = await getTasks({ isCompleted: false });
-        res.render('layout', { pageTitle: 'Incomplete Tasks', tasks });
-    });
-            
-    app.get('/app/tasks/completed', async (req, res) => {
-        const tasks = await getTasks({ isCompleted: true });
-        res.render('layout', { pageTitle: 'Completed Tasks', tasks });
-    });
-            
-    app.get('/app/tasks/today', async (req, res) => {
-        const tasks = await getTasks({ dueToday: true });
-        res.render('layout', { pageTitle: `Today's Tasks`, tasks });
+
+    app.get('/admin', authRole('admin'), (req, res ) => {
+        res.send('Admin page.');
     });
 
     app.use((err, req, res, next) => {
