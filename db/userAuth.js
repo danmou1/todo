@@ -15,6 +15,7 @@ function verifyPassword(password, hashedPassword, salt) {
     return hash === hashedPassword;
 };
 
+//queries role in database then add the role to the user object.
 async function checkRole(req, res, next) {
     const userId = req.user.userId;
 
@@ -25,13 +26,24 @@ async function checkRole(req, res, next) {
         }
         const role = result.rows[0].role;
         req.user.role = role;
-        console.log(req.user);
+
         next();
     } catch (err) {
         console.error('Error querying the database:', err);
         return res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+function authRole(role) {
+    return (req, res, next) => {
+        if (req.user.role !== role) {
+            res.status(401);
+            return res.send('Not Allowed');;
+        }
+
+        next();
+    }
+}
 
 async function verifyToken(req, res, next) {
     const token = req.cookies.token;
@@ -49,6 +61,7 @@ async function verifyToken(req, res, next) {
     });
 };
 
+//checks if user is in database, then give him a token containing basic auth information
 async function userAuth(username, password) {
     try {
         const result = await client.query('SELECT * FROM users WHERE username = $1', [username]);
@@ -70,4 +83,5 @@ module.exports = {
     userAuth,
     verifyToken,
     checkRole,
+    authRole,
 };
