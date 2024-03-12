@@ -133,3 +133,8 @@
 
 # 08/03/2024 20:00 ->
 - admin/user CRUD queries are supposedly complete, yet to be tested.
+
+# 11/03/2024 23:30 ->
+- TODO: Deprecate all of /app/tasks/.. and turn them into queries. The back end structure is ready for the main tasks endpoint to handle everything. DONE
+- Admin recognition tested and ready. Now to understand how to deal with this.
+- refactored routes
