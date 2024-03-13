@@ -71,6 +71,13 @@ function setupRoutes() {
             const { username, password } = req.body;
             addUser(username, password)
                 .then(() => res.status(200).send({ success: true }))
+                .catch(err => {
+                    switch (err.code) {
+                        case '23505':
+                            res.status(401).json({ error: 'User already exists.'});
+                            break;
+                    };
+                });
         });
 
     app.route('/app/tasks')
