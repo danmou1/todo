@@ -69,15 +69,17 @@ async function getUsers(user) {
     throw new Error('Forbidden');
 };
 
-async function createTask(taskData, user) {
+async function createTask(body, user) {
     try {
-        const { title, description, dueDate, priority } = taskData;
+        console.log(body, user);
+        const { title, description, dueDate, priority } = body;
         const { userId } = user;
 
         return client.query(
-            'INSERT INTO tasks VALUES (DEFAULT, $1, $2, $3, CURRENT_TIMESTAMP, $4, $5) RETURNING *',
+            'INSERT INTO tasks (title, description, due_date, created_at, priority, user_id) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, $4, $5) RETURNING *',
             [title, description, dueDate, priority, userId]
-        )
+        );
+
     } catch (err) {
         console.error('Error inserting task:', err);
     }
