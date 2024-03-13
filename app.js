@@ -91,8 +91,7 @@ function setupRoutes() {
                 tasks,
                 isAdmin,
             }
-            console.log(req.user);
-            console.log(isAdmin);
+
             if (isAdmin) {
                 options.users = await getUsers();
             };
@@ -120,10 +119,21 @@ function setupRoutes() {
             }
         });
 
-    app.get('/admin', authRole('admin'), (req, res ) => {
-        res.send('Admin page.');
-    });
+    app.route(authRole('admin'), '/app/admin')
+        .get(async (req, res ) => {
+            let { q: searchParams, d: date, c: isCompleted, t: dueToday } = req.query;
 
+            const tasks = await getTasks({ searchParams, date, isCompleted, dueToday }, req.user);
+            const options = {
+                pageTitle: 'Admin Panel',
+                tasks,
+                isAdmin: true,
+            }
+            options.users = await getUsers();
+
+            res.render('dashboard', options);
+        });
+        
     app.use((err, req, res, next) => {
         console.error(err);
         if (err.code === '23505') {
