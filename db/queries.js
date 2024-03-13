@@ -60,14 +60,11 @@ async function getTasks(options = {}, user) {
     }
 };
 
-async function getUsers(user) {
-    if (user.role === 'admin') {
-        const result = await client.query('SELECT * FROM users');
-        return result.rows;
-    }
-
-    throw new Error('Forbidden');
-};
+async function getUsers() {
+    const result = await client.query('SELECT * FROM users');
+    console.log(result);
+    return result.rows;
+}
 
 async function createTask(body, user) {
     try {
