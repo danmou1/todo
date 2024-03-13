@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const newTaskButton = document.getElementById('new-task-button');
-    const formContainer = document.getElementById('form-container');
+    const formContainer = document.getElementById('task-form-container');
     const tasksContainer = document.getElementById('tasks-container');
     const searchForm = document.getElementById('search-form');
 

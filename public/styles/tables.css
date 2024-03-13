@@ -3,11 +3,12 @@ table {
     width: 35%;
 }
 
-table.tasks {
+table {
     margin-top: 5rem;
     margin-left: auto;
     margin-right: auto;
 }
+
 th, td {
     border: 2px solid var(--bg-secondary);
     padding: 1rem;
@@ -15,8 +16,16 @@ th, td {
     color: var(--bg-secondary)
 }
 
-.new-task-button {
+.new-task-button, .new-user-button {
     background-color: #4CAF50;
+    color: white;
+    padding: 5px 12px;
+    border: none;
+    border-radius: 25px;
+}
+
+.edit-button {
+    background-color: cadetblue;
     color: white;
     padding: 5px 12px;
     border: none;
@@ -31,7 +40,7 @@ th, td {
     border-radius: 25px;
 }
 
-.form-container form {
+.task-form-container, .user-form-container form {
     margin: 20px auto;
     padding: 15px;
     max-width: 400px;
@@ -39,19 +48,19 @@ th, td {
     border-radius: 5px;
 }
 
-.form-container label {
+.task-form-container, .user-form-container label {
     display: block;
     margin-bottom: 5px;
 }
 
-.form-container input, textarea, select {
+.task-form-container, .user-form-container input, textarea, select {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
     box-sizing: border-box;
 }
 
-.form-container button {
+.task-form-container button, .user-form-container button {
     background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
