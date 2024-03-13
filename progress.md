@@ -138,3 +138,8 @@
 - TODO: Deprecate all of /app/tasks/.. and turn them into queries. The back end structure is ready for the main tasks endpoint to handle everything. DONE
 - Admin recognition tested and ready. Now to understand how to deal with this.
 - refactored routes
+
+# 13/03/2024 02:00 ->
+- added register error handling
+- implemented task ownership
+- 
