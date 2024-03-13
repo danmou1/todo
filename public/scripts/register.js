@@ -17,10 +17,16 @@ document.getElementById('register-form').addEventListener('submit', async functi
             console.log(response)
         } else {
             const { error } = await response.json();
-            console.log(error);
-            console.error('Registration error:', error);
+
+            const errorElement = document.getElementById('login-error');
+            errorElement.textContent = error;
+            errorElement.style.display = 'block';
         }
     } catch (err) {
         console.error('Error during registration:', err);
+
+        const errorElement = document.getElementById('login-error');
+        errorElement.textContent = 'An error occurred during registration. Please try again.'
+        errorElement.style.display = 'block';
     }
 });
