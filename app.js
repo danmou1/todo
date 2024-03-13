@@ -2,7 +2,7 @@ const express = require('express');
 require('dotenv').config();
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
-const { getTasks, createTask, updateTask, deleteTask, addUser} = require('./db/queries');
+const { getTasks, createTask, updateTask, deleteTask, addUser, getUsers} = require('./db/queries');
 const { userAuth, verifyToken, checkRole, authRole } = require('./db/userAuth')
 
 const cookieParser = require('cookie-parser');
@@ -13,7 +13,7 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 async function startServer() {
     try {
         await initializeDatabase();
@@ -84,10 +84,20 @@ function setupRoutes() {
         .get(async (req, res) => {
             let { q: searchParams, d: date, c: isCompleted, t: dueToday } = req.query;
 
-            console.log(req.query);
-            const tasks = await getTasks({ searchParams, date, isCompleted }, req.user);
+            const tasks = await getTasks({ searchParams, date, isCompleted, dueToday }, req.user);
+            const isAdmin = req.user.role === 'admin';
+            const options = {
+                pageTitle: 'Dashboard',
+                tasks,
+                isAdmin,
+            }
+            console.log(req.user);
+            console.log(isAdmin);
+            if (isAdmin) {
+                options.users = await getUsers();
+            };
 
-            res.render('layout', { pageTitle: 'Tasks', tasks });
+            res.render('dashboard', options);
         })
         .post(async (req, res) => {
             await createTask(req.body, req.user);
