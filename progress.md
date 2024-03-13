@@ -139,8 +139,12 @@
 - Admin recognition tested and ready. Now to understand how to deal with this.
 - refactored routes
 
-# 13/03/2024 02:00 5:00->
+# 13/03/2024 02:00 -> 5:00
 - added register error handling
 - implemented task ownership
 - added users table for admins with mild styling
 - buttons don't have functionality yet. edit button is broken
+
+# 13/03/2024 18:00 -> 20:00
+- init admin endpoint
+- fixing front end script (still have some issues with it)
