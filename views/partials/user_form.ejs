@@ -1,0 +1,18 @@
+<div id="user-form-container" class="user-form-container" style="display: none;">
+    <form id="user-form" method="post" action="/app/tasks">
+        <label for="userid">UID:</label>
+        <input type="text" name="userid" placeholder="123..." required>
+
+        <label for='username'>Username:</label>
+        <input type="text" name="username" placeholder="Username..." required>
+
+        <label for="role">Role:</label>
+        <select name="role">
+            <option value="0">User</option>
+            <option value="1">Admin</option>
+        </select>
+        <br>
+
+        <button type="submit">Submit</button>
+    </form>
+</div>
