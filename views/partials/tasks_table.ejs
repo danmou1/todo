@@ -24,6 +24,7 @@
                     <td><%= task.priority %></td>
                     <td>
                         <input type="button" value="Delete" class="delete-button" onclick="deleteTask('<%= task.task_id %>', '<%= task.title %>')" />
+                        <input type="button" value="Edit" class="edit-button" onclick="editTask('<%= task.task_id%>')">
                     </td>
                 </tr>
             <% }); %>
