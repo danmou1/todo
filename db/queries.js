@@ -62,7 +62,6 @@ async function getTasks(options = {}, user) {
 
 async function getUsers() {
     const result = await client.query('SELECT * FROM users');
-    console.log(result);
     return result.rows;
 }
 
