@@ -14,7 +14,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
         });
 
         if (response.ok) {
-            console.log(response)
+            window.location.href = '/login';
         } else {
             const { error } = await response.json();
 
