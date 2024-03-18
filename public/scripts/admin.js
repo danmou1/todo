@@ -1,3 +1,4 @@
+
 const newTaskButton = document.getElementById('new-task-button');
 const taskFormContainer = document.getElementById('task-form-container');
 const tasksContainer = document.getElementById('tasks-container');
@@ -7,42 +8,42 @@ const taskForm = document.getElementById('task-form');
 document.addEventListener('DOMContentLoaded', function() {
     searchForm.addEventListener('submit', function(event) {
         event.preventDefault();
-        
+
         const searchInput = document.getElementById('search-input').value.trim();
         const dateRegex = /date:(\d{2}-\d{2}-\d{4})/;
         const date = searchInput.match(dateRegex) ? searchInput.match(dateRegex)[1] : null;
         const completedRegex = /completed:(true|false)/i;
         const completed = searchInput.match(completedRegex) ? searchInput.match(completedRegex)[1] : null;
         const searchQuery = searchInput.replace(dateRegex, '').replace(completedRegex, '').trim();
-        
+
         let queryString = 'tasks';
-        
+
         if (searchQuery) {
             queryString += `?q=${encodeURIComponent(searchQuery)}`;
         }
-        
+
         if (date) {
             queryString += `${searchQuery ? '&' : '?'}d=${encodeURIComponent(date)}`;
         }
-        
+
         if (completed !== null ) {
             queryString += `${searchQuery || date ? '&' : '?'}c=${completed}`;
         }
-        
+
         window.location.href = queryString;
     });
-    
+
     newTaskButton.addEventListener('click', function () {
         taskFormContainer.style.display = 'block';
         tasksContainer.style.display = 'none';
     });
-    
+
     const checkboxes = document.querySelectorAll('input[type="checkbox"][id="task-checkbox"]');
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', async function () {
             const taskId = this.getAttribute('data-taskId');
             const isCompleted = this.checked;
-            
+        
             try {
                 await fetch(`/app/tasks`, {
                     method: 'PUT',
@@ -51,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({ taskId, completed: isCompleted })
                 });
-                
+        
                 console.log('Task marked as completed');
             } catch (error) {
                 console.error('Error marking task as completed:', error);
@@ -62,13 +63,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function deleteTask(taskId, title) {
     console.log('Deletion started');
-    
+
     const confirmed = confirm(`Are you sure you want to delete "${title}"?`);
     
     if (!confirmed) {
         return;
     }
-    
+
     try {
         const response = await fetch(`/app/tasks`, {
             method: 'DELETE',
@@ -77,7 +78,7 @@ async function deleteTask(taskId, title) {
             },
             body: JSON.stringify({ taskId })
         });
-        
+
         if (response.ok) {
             const deletedRow = document.getElementById(`task-row-${taskId}`);
             if (deletedRow) {
@@ -95,8 +96,6 @@ async function deleteTask(taskId, title) {
     }
 };
 
-let isEdit = false;
-
 function editTask(task_id) {
     const taskRow = document.getElementById(`task-row-${task_id}`);
     const titleInput = taskForm.elements['title'];
@@ -109,41 +108,69 @@ function editTask(task_id) {
     dueDateInput.value = taskRow.cells[3].textContent;
     priorityInput.value = taskRow.cells[4].textContent;
 
-    taskFormContainer.style.display = 'block';
-    tasksContainer.style.display = 'none';
+    console.log('pre put');
 
-    isEdit = true;
+    taskForm.method = 'PUT';
+
+    console.log('post put');
+    taskFormContainer.style.display = 'block';
+    tasksContainer.style.display = 'none';;
 };
 
-function submitForm(task_id) {
-    const formData =  {
-        title: document.getElementById('title').value,
-        description: document.getElementById('description').value,
-        dueDate: document.getElementById('dueDate').value,
-        priority: document.getElementById('priority').value,
-    };
+const newUserButton = document.getElementById('new-user-button');
+const usersContainer = document.getElementById('users-container');
+const userFormContainer = document.getElementById('user-form-container');
+const userForm = document.getElementById('user-form');
 
-    if (task_id) {
-        formData.taskId = (task_id);
+newUserButton.addEventListener('click', function() {
+    userFormContainer.style.display = 'block';
+    usersContainer.style.display = 'none';
+});
+
+function editUser(userId) {
+    const userRow = document.getElementById(`user-row-${userId}`);
+    const uidInput = userForm.elements['userid'];
+    const usernameInput = userForm.elements['username'];
+    const roleInput = userForm.elements['role'];
+    
+    uidInput.value = userId;
+    usernameInput.value = userRow.cells[1].textContent;
+    roleInput.value = userRow.cells[2].textContent;;
+
+    userFormContainer.style.display = 'block';
+    usersContainer.style.display = 'none';;
+}
+    
+async function deleteUser(userId) {
+    console.log('Deletion started');
+
+    const confirmed = confirm(`Are you sure you want to delete user with ID: "${userId}"?`);
+    
+    if (!confirmed) {
+        return;
     }
 
-    console.log('submitform called');
+    try {
+        const response = await fetch(`/app/users/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
 
-    const method = isEdit ? 'PUT' : 'POST';
-
-    fetch('/app/tasks', {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(res => {
-        if (res.ok) {
-            locationreload();
+        if (response.ok) {
+            const deletedRow = document.getElementById(`user-row-${userId}`);
+            if (deletedRow) {
+                deletedRow.remove();
+                console.log("User deleted successfully.");
+            } else {
+                console.error("Error: Deleted row not found in the table.");
+            }
+        } else {
+            const errorMessage = await response.text();
+            console.error(`Error deleting user: ${errorMessage}`);
         }
-    })
-    .catch(err => {
-        console.error('Error submitting task:', err);
-    })
-}
+    } catch (error) {
+        console.error("Error:", error);
+    }
+};
