@@ -14,7 +14,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
         });
 
         if (response.ok) {
-            window.location.href = '/app/tasks'
+            window.location.href = response.url;
         } else {
             const { error } = await response.json();
 
