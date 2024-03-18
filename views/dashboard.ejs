@@ -12,10 +12,15 @@
     <%- include('partials/tasks_table.ejs'); %>
     <%- include('partials/task_form.ejs'); %>
 
-    <% if (role === 'admin' && typeof users !== 'undefined') { %>
+    <% if (endpoint === '/app/admin') { %>
         <%- include('partials/users_table.ejs'); %>
         <%- include('partials/user_form.ejs');%>
+
+        <script src="/scripts/admin.js"></script>
     <% } %>
-    <script src="/scripts/script.js"></script>
+
+    <% if (endpoint == '/app/tasks') { %>
+        <script src="/scripts/script.js"></script> 
+    <% } %>
 </body>
 </html>
