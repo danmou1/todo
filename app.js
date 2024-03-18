@@ -10,10 +10,12 @@ const app = express();
 const port = 3000;
 
 app.set('view engine', 'ejs');
+
 app.use(express.static(__dirname + '/public'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+
 async function startServer() {
     try {
         await initializeDatabase();
@@ -71,7 +73,7 @@ function setupRoutes() {
         .get((req, res) => {
             res.render('register', { error: null });
         })
-        .post(async (req, res, next) => {
+        .post(async (req, res) => {
             const { username, password } = req.body;
             addUser(username, password)
                 .then(() => res.status(200).send({ success: true }))
@@ -92,19 +94,19 @@ function setupRoutes() {
             const options = {
                 pageTitle: 'Dashboard',
                 tasks,
-                role: req.user.role,
+                endpoint: req.originalUrl
             }
 
             res.render('dashboard', options);
         })
         .post(async (req, res) => {
+            console.log(req.body, req.user);
             await createTask(req.body, req.user);
             res.redirect('/app/tasks');
         })
         .put(async (req, res) => {
-            const { taskId } = req.body;
-
-            await updateTask(taskId, req.user);
+            console.log('PUT Called');
+            await updateTask(req.body, req.user);
             res.redirect('/app/tasks');
         })
         .delete(async (req, res) => {
@@ -126,7 +128,7 @@ function setupRoutes() {
             const options = {
                 pageTitle: 'Admin Panel',
                 tasks,
-                role: req.user.role,
+                endpoint: req.originalUrl
             };
             options.users = await getUsers();
 
@@ -137,9 +139,7 @@ function setupRoutes() {
             res.redirect('/app/tasks');
         }))
         .put(authRole('admin', async (req, res) => {
-            const { taskId } = req.body;
-
-            await updateTask(taskId, req.user);
+            await updateTask(req.body, req.user);
             res.redirect('/app/tasks');
         }))
         .delete(authRole('admin', async (req, res) => {
