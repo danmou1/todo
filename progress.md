@@ -148,3 +148,11 @@
 # 13/03/2024 18:00 -> 20:00
 - init admin endpoint
 - fixing front end script (still have some issues with it)
+
+# 18/03/2024 15:00 ->
+- optimized some routing
+- separated admin and user script, because of slight differences inside statements
+- changed style
+- changed some queries
+- changed conditions for rendering
+- learned that html forms do not support put requests
