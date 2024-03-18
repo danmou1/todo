@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
 const { getTasks, createTask, updateTask, deleteTask, addUser, getUsers} = require('./db/queries');
-const { userAuth, verifyToken, checkRole, authRole } = require('./db/userAuth')
+const { userAuth, verifyToken, authRole } = require('./db/userAuth')
 
 const cookieParser = require('cookie-parser');
 const app = express();
@@ -35,9 +35,7 @@ app.use((req, res, next) => {
         return next();
     }
 
-    verifyToken(req, res, () => {
-        checkRole(req, res, next);
-    });
+    verifyToken(req, res, next);
 });
 
 function setupRoutes() {
@@ -54,10 +52,16 @@ function setupRoutes() {
             const authResult = await userAuth(username, password);
 
             if (authResult) {
-                const { token } = authResult;
+                const { token, user } = authResult;
 
                 res.cookie('token', token, { maxAge: 1000*60*60, httpOnly: true});
-                res.status(200).json({ token });
+
+                let redirectUrl = '/app/tasks';
+                if (user.role === 'admin') {
+                    redirectUrl = '/app/admin';
+                }
+
+                res.redirect(redirectUrl);
             } else {
                 res.status(401).json({ error: 'Invalid credentials.' });
             }
@@ -85,16 +89,11 @@ function setupRoutes() {
             let { q: searchParams, d: date, c: isCompleted, t: dueToday } = req.query;
 
             const tasks = await getTasks({ searchParams, date, isCompleted, dueToday }, req.user);
-            const isAdmin = req.user.role === 'admin';
             const options = {
                 pageTitle: 'Dashboard',
                 tasks,
-                isAdmin,
+                role: req.user.role,
             }
-
-            if (isAdmin) {
-                options.users = await getUsers();
-            };
 
             res.render('dashboard', options);
         })
@@ -119,21 +118,40 @@ function setupRoutes() {
             }
         });
 
-    app.route(authRole('admin'), '/app/admin')
-        .get(async (req, res ) => {
+    app.route('/app/admin')
+        .get(authRole('admin', async (req, res) => {
             let { q: searchParams, d: date, c: isCompleted, t: dueToday } = req.query;
-
             const tasks = await getTasks({ searchParams, date, isCompleted, dueToday }, req.user);
+
             const options = {
                 pageTitle: 'Admin Panel',
                 tasks,
-                isAdmin: true,
-            }
+                role: req.user.role,
+            };
             options.users = await getUsers();
 
             res.render('dashboard', options);
-        });
-        
+        }))
+        .post(authRole('admin', async (req, res) => {
+            await createTask(req.body, req.user);
+            res.redirect('/app/tasks');
+        }))
+        .put(authRole('admin', async (req, res) => {
+            const { taskId } = req.body;
+
+            await updateTask(taskId, req.user);
+            res.redirect('/app/tasks');
+        }))
+        .delete(authRole('admin', async (req, res) => {
+            const { taskId } = req.body;
+
+            try {
+                await deleteTask(taskId, req.user);
+                res.status(200).send({ success: true });
+            } catch (error) {
+                res.status(500).send({ success: false, error: "Internal server error" });
+            }
+        }));
     app.use((err, req, res, next) => {
         console.error(err);
         if (err.code === '23505') {
