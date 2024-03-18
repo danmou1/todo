@@ -67,32 +67,36 @@ async function getUsers() {
 
 async function createTask(body, user) {
     try {
-        console.log(body, user);
-        const { title, description, dueDate, priority } = body;
-        const { userId } = user;
+        const { title, description, dueDate, priority, taskUserId } = body;
+        let { userId } = user;
 
-        return client.query(
-            'INSERT INTO tasks (title, description, due_date, created_at, priority, user_id) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, $4, $5) RETURNING *',
-            [title, description, dueDate, priority, userId]
-        );
+        if (user.role === 'admin' && taskUserId) {
+            userId = taskUserId;
+        }
 
+        let query = 'INSERT INTO tasks (title, description, due_date, created_at, priority, user_id) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, $4, $5)'
+        const values = [title, description, dueDate, priority, userId];
+
+        return client.query(query, values);
     } catch (err) {
         console.error('Error inserting task:', err);
     }
 };
 
-async function updateTask(taskId, taskData, user) {
-    const updates = [];
-    const params = [];
-
+async function updateTask(body, user) {
     const { 
         role = null,
         userId = null,
     } = user;
 
+    console.log(body);
+
+    const updates = [];
+    const params = [];
+    
     if (role === 'user') {
         const getOwner = await client.query(
-            'SELECT user_id FROM tasks WHERE task_id = $1', [taskId]
+            'SELECT user_id FROM tasks WHERE task_id = $1', [task_id]
         );
         const ownerId = getOwner.rows[0].user_id;
 
@@ -101,24 +105,23 @@ async function updateTask(taskId, taskData, user) {
         }
     }
 
-    Object.entries(taskData).forEach(([key, value]) => {
-        if (key !== 'task_id' && value !== null && value !== undefined) {
+    Object.entries(body).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
             updates.push(`${key} = $${params.length + 1}`);
             params.push(value);
         }
     });
-    params.push(taskId);
 
     const setClause = updates.join(', ');
     
+    console.log(setClause, params.length, params);
     try {
-        const result = client.query(
-            `UPDATE tasks SET ${setClause} WHERE task_id = $${params.length} RETURNING *`,
+        await client.query(
+            `UPDATE tasks SET ${setClause} WHERE task_id = $${params.taskId} RETURNING *`,
             params
-        )
+        );
 
-        console.log(`[${taskId}: Updated task.]`);
-        return result.rows[0];
+        console.log(`[${task_id}: Updated task.]`);
     } catch (err) {
         console.error('Error updating task:', err);
     }
@@ -126,8 +129,8 @@ async function updateTask(taskId, taskData, user) {
 
 async function deleteTask(taskId, user) {
     const {
-        role = null,
-        userId = null,
+        role,
+        userId,
     } = user;
 
     if (role === 'user') {
