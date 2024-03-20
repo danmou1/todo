@@ -96,9 +96,10 @@ async function deleteTask(taskId, title) {
 };
 
 let isEdit = false;
+let formTaskId = '';
 
-function editTask(task_id) {
-    const taskRow = document.getElementById(`task-row-${task_id}`);
+function editTask(taskId) {
+    const taskRow = document.getElementById(`task-row-${taskId}`);
     const titleInput = taskForm.elements['title'];
     const descriptionInput = taskForm.elements['description'];
     const dueDateInput = taskForm.elements['dueDate'];
@@ -113,9 +114,10 @@ function editTask(task_id) {
     tasksContainer.style.display = 'none';
 
     isEdit = true;
+    formTaskId = taskId;
 };
 
-function submitForm(task_id) {
+function submitForm(taskId) {
     const formData =  {
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,
@@ -123,8 +125,8 @@ function submitForm(task_id) {
         priority: document.getElementById('priority').value,
     };
 
-    if (task_id) {
-        formData.taskId = (task_id);
+    if (taskId) {
+        formData.taskId = (taskId);
     }
 
     console.log('submitform called');

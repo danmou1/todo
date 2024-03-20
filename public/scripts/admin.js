@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const completed = searchInput.match(completedRegex) ? searchInput.match(completedRegex)[1] : null;
         const searchQuery = searchInput.replace(dateRegex, '').replace(completedRegex, '').trim();
 
-        let queryString = 'tasks';
+        let queryString = '';
 
         if (searchQuery) {
             queryString += `?q=${encodeURIComponent(searchQuery)}`;
@@ -30,7 +30,11 @@ document.addEventListener('DOMContentLoaded', function() {
             queryString += `${searchQuery || date ? '&' : '?'}c=${completed}`;
         }
 
-        window.location.href = queryString;
+        const pathname = window.location.pathname;;
+        const directories = pathname.split('/');
+        const lastDir = directories.pop();
+
+        window.location.href = lastDir + queryString;
     });
 
     newTaskButton.addEventListener('click', function () {
@@ -45,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const isCompleted = this.checked;
         
             try {
-                await fetch(`/app/tasks`, {
+                await fetch(`/app/admin`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -96,26 +100,59 @@ async function deleteTask(taskId, title) {
     }
 };
 
-function editTask(task_id) {
-    const taskRow = document.getElementById(`task-row-${task_id}`);
+let isEdit = false;
+let formTaskId = '';
+
+function editTask(taskId) {
+    const taskRow = document.getElementById(`task-row-${taskId}`);
     const titleInput = taskForm.elements['title'];
     const descriptionInput = taskForm.elements['description'];
     const dueDateInput = taskForm.elements['dueDate'];
-    const priorityInput = taskForm.elements['priority']
+    const priorityInput = taskForm.elements['priority'];
+    const ownerIdInput = taskForm.elements['taskUserId'];
     
     titleInput.value = taskRow.cells[1].textContent;
     descriptionInput.value = taskRow.cells[2].textContent;
     dueDateInput.value = taskRow.cells[3].textContent;
     priorityInput.value = taskRow.cells[4].textContent;
+    ownerIdInput.value = taskRow.cells[5].textContent;
 
-    console.log('pre put');
-
-    taskForm.method = 'PUT';
-
-    console.log('post put');
     taskFormContainer.style.display = 'block';
-    tasksContainer.style.display = 'none';;
+    tasksContainer.style.display = 'none';
+
+    isEdit = true;
+    formTaskId = taskId;
 };
+
+function submitForm(taskId) {
+    const formData =  {
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        dueDate: document.getElementById('dueDate').value,
+        priority: document.getElementById('priority').value,
+        userId: document.getElementById('taskUserId').value,
+    };
+    if (taskId) {
+        formData.taskId = (taskId);
+    }
+
+    const method = isEdit ? 'PUT' : 'POST';
+    fetch('/app/admin', {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(res => {
+        if (res.ok) {
+            window.location.reload();
+        }
+    })
+    .catch(err => {
+        console.error('Error submitting task:', err);
+    })
+}
 
 const newUserButton = document.getElementById('new-user-button');
 const usersContainer = document.getElementById('users-container');
