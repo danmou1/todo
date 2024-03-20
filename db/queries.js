@@ -89,38 +89,32 @@ async function updateTask(body, user) {
         userId = null,
     } = user;
 
-    console.log(body);
+    const { taskId:task_id} = body
+    delete body.taskId
 
-    const updates = [];
-    const params = [];
-    
     if (role === 'user') {
-        const getOwner = await client.query(
-            'SELECT user_id FROM tasks WHERE task_id = $1', [task_id]
-        );
+        const getOwner = await client.query('SELECT user_id FROM tasks WHERE task_id = $1', [task_id]);
         const ownerId = getOwner.rows[0].user_id;
-
         if (ownerId !== userId) {
             throw new Error('Forbidden');
         }
     }
-
-    Object.entries(body).forEach(([key, value]) => {
-        if (value !== null && value !== undefined) {
-            updates.push(`${key} = $${params.length + 1}`);
+        
+    const updates = [];
+    const params = [];
+    
+    Object.entries(body)
+        .filter(([key, value]) => value !== '')
+        .forEach(([key, value], index) => {
+            updates.push(`${key.replace(/([A-Z])/g, '_$1').toLowerCase()} = $${index + 1}`);
             params.push(value);
         }
-    });
-
-    const setClause = updates.join(', ');
-    
-    console.log(setClause, params.length, params);
-    try {
-        await client.query(
-            `UPDATE tasks SET ${setClause} WHERE task_id = $${params.taskId} RETURNING *`,
-            params
         );
+    
+    const query = `UPDATE tasks SET ${updates.join(', ')} WHERE task_id = $${params.length + 1}`;
 
+    try {
+        await client.query(query, [...params, task_id]);
         console.log(`[${task_id}: Updated task.]`);
     } catch (err) {
         console.error('Error updating task:', err);
