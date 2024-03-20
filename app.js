@@ -105,9 +105,7 @@ function setupRoutes() {
             res.redirect('/app/tasks');
         })
         .put(async (req, res) => {
-            console.log('PUT Called');
             await updateTask(req.body, req.user);
-            res.redirect('/app/tasks');
         })
         .delete(async (req, res) => {
             const { taskId } = req.body;
@@ -140,7 +138,7 @@ function setupRoutes() {
         }))
         .put(authRole('admin', async (req, res) => {
             await updateTask(req.body, req.user);
-            res.redirect('/app/tasks');
+            res.status(200);
         }))
         .delete(authRole('admin', async (req, res) => {
             const { taskId } = req.body;
