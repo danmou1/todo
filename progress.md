@@ -157,3 +157,8 @@
 - changed conditions for rendering
 - learned that html forms do not support put requests
 - late push due to internet issues
+
+# 20/03/2024 17:00
+- fixed crud issues that have arisen from using html forms.
+- PUT now works.
+- admin can now reassign task ownership.
