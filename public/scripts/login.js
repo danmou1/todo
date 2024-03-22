@@ -13,6 +13,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
             body: JSON.stringify({ username, password })
         });
 
+        console.log(response);
         if (response.ok) {
             window.location.href = response.url;
         } else {

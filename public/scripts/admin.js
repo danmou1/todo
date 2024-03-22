@@ -49,15 +49,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const isCompleted = this.checked;
         
             try {
-                await fetch(`/app/admin`, {
+                await fetch(`/api/v1/tasks`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ taskId, completed: isCompleted })
                 });
-        
-                console.log('Task marked as completed');
             } catch (error) {
                 console.error('Error marking task as completed:', error);
             }
@@ -66,8 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 async function deleteTask(taskId, title) {
-    console.log('Deletion started');
-
     const confirmed = confirm(`Are you sure you want to delete "${title}"?`);
     
     if (!confirmed) {
@@ -75,7 +71,7 @@ async function deleteTask(taskId, title) {
     }
 
     try {
-        const response = await fetch(`/app/tasks`, {
+        const response = await fetch(`/api/v1/tasks`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -87,7 +83,6 @@ async function deleteTask(taskId, title) {
             const deletedRow = document.getElementById(`task-row-${taskId}`);
             if (deletedRow) {
                 deletedRow.remove();
-                console.log("Task deleted successfully.");
             } else {
                 console.error("Error: Deleted row not found in the table.");
             }
@@ -100,7 +95,7 @@ async function deleteTask(taskId, title) {
     }
 };
 
-let isEdit = false;
+let isEditTask = false;
 let formTaskId = '';
 
 function editTask(taskId) {
@@ -124,7 +119,7 @@ function editTask(taskId) {
     formTaskId = taskId;
 };
 
-function submitForm(taskId) {
+function submitTaskForm(taskId) {
     const formData =  {
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,
@@ -137,7 +132,7 @@ function submitForm(taskId) {
     }
 
     const method = isEdit ? 'PUT' : 'POST';
-    fetch('/app/admin', {
+    fetch('/ap1/v1/tasks', {
         method: method,
         headers: {
             'Content-Type': 'application/json'
@@ -164,23 +159,52 @@ newUserButton.addEventListener('click', function() {
     usersContainer.style.display = 'none';
 });
 
-function editUser(userId) {
-    const userRow = document.getElementById(`user-row-${userId}`);
-    const uidInput = userForm.elements['userid'];
+let isEditUser = false;
+let formUserId = '';
+
+function editUser(taskId) {
+    const userRow = document.getElementById(`task-row-${taskId}`);
+    const userIdInput = userForm.elements['userId'];
     const usernameInput = userForm.elements['username'];
     const roleInput = userForm.elements['role'];
     
-    uidInput.value = userId;
+    userIdInput.value = userRow.cells[0].textContent;
     usernameInput.value = userRow.cells[1].textContent;
-    roleInput.value = userRow.cells[2].textContent;;
+    roleInput.value = userRow.cells[2].textContent;
 
     userFormContainer.style.display = 'block';
-    usersContainer.style.display = 'none';;
-}
-    
-async function deleteUser(userId) {
-    console.log('Deletion started');
+    usersContainer.style.display = 'none';
 
+    isEditUser = true;
+    formUserId = userId;
+};
+
+function submitUserForm(userId) {
+    const formData =  {
+        user_id: document.getElementById('userId').value,
+        username: document.getElementById('username').value,
+        role: document.getElementById('role').value,
+    };
+    
+    const method = isEditUser ? 'PUT' : 'POST';
+    fetch('/ap1/v1/users', {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(res => {
+        if (res.ok) {
+            window.location.reload();
+        }
+    })
+    .catch(err => {
+        console.error('Error submitting task:', err);
+    })
+}
+
+async function deleteUser(userId) {
     const confirmed = confirm(`Are you sure you want to delete user with ID: "${userId}"?`);
     
     if (!confirmed) {
@@ -188,18 +212,18 @@ async function deleteUser(userId) {
     }
 
     try {
-        const response = await fetch(`/app/users/${userId}`, {
+        const response = await fetch(`/api/v1/users/`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({ userId })
         });
 
         if (response.ok) {
             const deletedRow = document.getElementById(`user-row-${userId}`);
             if (deletedRow) {
                 deletedRow.remove();
-                console.log("User deleted successfully.");
             } else {
                 console.error("Error: Deleted row not found in the table.");
             }

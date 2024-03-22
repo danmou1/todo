@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const completed = searchInput.match(completedRegex) ? searchInput.match(completedRegex)[1] : null;
         const searchQuery = searchInput.replace(dateRegex, '').replace(completedRegex, '').trim();
         
-        let queryString = 'tasks';
+        let queryString = '';
         
         if (searchQuery) {
             queryString += `?q=${encodeURIComponent(searchQuery)}`;
@@ -28,8 +28,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (completed !== null ) {
             queryString += `${searchQuery || date ? '&' : '?'}c=${completed}`;
         }
-        
-        window.location.href = queryString;
+
+        const pathname = window.location.pathname;;
+        const directories = pathname.split('/');
+        const lastDir = directories.pop();
+
+        window.location.href = lastDir + queryString;
     });
     
     newTaskButton.addEventListener('click', function () {
@@ -44,15 +48,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const isCompleted = this.checked;
             
             try {
-                await fetch(`/app/tasks`, {
+                await fetch(`/api/v1/tasks`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ taskId, completed: isCompleted })
                 });
-                
-                console.log('Task marked as completed');
             } catch (error) {
                 console.error('Error marking task as completed:', error);
             }
@@ -60,9 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-async function deleteTask(taskId, title) {
-    console.log('Deletion started');
-    
+async function deleteTask(taskId, title) {    
     const confirmed = confirm(`Are you sure you want to delete "${title}"?`);
     
     if (!confirmed) {
@@ -70,7 +70,7 @@ async function deleteTask(taskId, title) {
     }
     
     try {
-        const response = await fetch(`/app/tasks`, {
+        const response = await fetch(`/api/v1/tasks`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -82,7 +82,6 @@ async function deleteTask(taskId, title) {
             const deletedRow = document.getElementById(`task-row-${taskId}`);
             if (deletedRow) {
                 deletedRow.remove();
-                console.log("Task deleted successfully.");
             } else {
                 console.error("Error: Deleted row not found in the table.");
             }
@@ -117,7 +116,7 @@ function editTask(taskId) {
     formTaskId = taskId;
 };
 
-function submitForm(taskId) {
+function submitTaskForm(taskId) {
     const formData =  {
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,
@@ -129,11 +128,9 @@ function submitForm(taskId) {
         formData.taskId = (taskId);
     }
 
-    console.log('submitform called');
-
     const method = isEdit ? 'PUT' : 'POST';
 
-    fetch('/app/tasks', {
+    fetch('/api/v1/tasks', {
         method: method,
         headers: {
             'Content-Type': 'application/json'
