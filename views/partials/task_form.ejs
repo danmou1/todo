@@ -22,11 +22,11 @@
         </select>
         <br>
 
-        <% if (endpoint === '/app/admin') { %>
+        <% if (endpoint === '/admin') { %>
             <label for="taskUserId">Owner ID:</label>
             <input type="text" id="taskUserId" placeholder="Defaults to your ID."/>
             <br>
         <% } %>
-        <button type="button" onclick="submitForm(formTaskId)">Submit</button>
+        <button type="button" onclick="submitTaskForm(formTaskId)">Submit</button>
     </form>
 </div>

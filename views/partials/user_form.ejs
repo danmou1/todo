@@ -1,11 +1,11 @@
 <div id="user-form-container" class="user-form-container" style="display: none;">
-    <form id="user-form" method="post" action="/app/tasks">
+    <form id="user-form">
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" placeholder="26...">
+
         <label for='username'>Username:</label>
-        <input type="text" name="username" placeholder="Username..." required>
-
-        <label for="password">Password:</label>
-        <input type="text" name="password" placeholder="*******" required>
-
+        <input type="text" name="username" placeholder="Username...">
+        
         <label for="role">Role:</label>
         <select name="role">
             <option value="0">User</option>
@@ -13,6 +13,6 @@
         </select>
         <br>
 
-        <button type="submit">Submit</button>
+        <button type="button" onclick="submitUserForm(formUserId)">Submit</button>
     </form>
 </div>
