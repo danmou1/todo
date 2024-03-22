@@ -60,12 +60,7 @@ async function getTasks(options = {}, user) {
     }
 };
 
-async function getUsers() {
-    const result = await client.query('SELECT * FROM users');
-    return result.rows;
-}
-
-async function createTask(body, user) {
+async function addTask(body, user) {
     try {
         const { title, description, dueDate, priority, taskUserId } = body;
         let { userId } = user;
@@ -89,7 +84,7 @@ async function updateTask(body, user) {
         userId = null,
     } = user;
 
-    const { taskId:task_id} = body
+    const { taskId:task_id } = body
     delete body.taskId
 
     if (role === 'user') {
@@ -121,11 +116,13 @@ async function updateTask(body, user) {
     }
 };
 
-async function deleteTask(taskId, user) {
+async function deleteTask(body, user) {
     const {
         role,
         userId,
     } = user;
+
+    const { taskId } = body
 
     if (role === 'user') {
         const getOwner = await client.query(
@@ -145,6 +142,11 @@ async function deleteTask(taskId, user) {
     });
 };
 
+async function getUsers() {
+    const result = await client.query('SELECT * FROM users');
+    return result.rows;
+}
+
 async function addUser(username, password) {
     try {
         const salt = crypto.randomBytes(16).toString('hex');
@@ -158,7 +160,7 @@ async function addUser(username, password) {
 
 module.exports = {
     getTasks,
-    createTask,
+    addTask,
     updateTask,
     deleteTask,
     addUser,
