@@ -175,18 +175,20 @@ async function updateUser(body) {
     });
 
     if (newUserId) {
-        updates.push(`user_id`);
+        updates.push(`user_id = $${params.length + 1}`);
         params.push(newUserId);
     }
 
-    const query = `UPDATE users SET ${updates.join(', ')}, user_id = $${params.length} WHERE user_id = $1`;
+    const query = `UPDATE users SET ${updates.join(', ')} WHERE user_id = $${params.length + 1}`;
+    console.log(query);
     try {
         console.log(`[U${userId}] Updated:`)
         updates.forEach((update, index) => {
-            console.log(`${update}: ${params[index]}`);
+            const truncatedUpdate = update.slice(0, -5);
+            console.log(`[${truncatedUpdate}, ${params[index]}]`);
         });
 
-        await client.query(query, [userId, ...params]);
+        await client.query(query, [...params, userId]);
     } catch (err) {
         console.error('Error updating user:', err);
     }
