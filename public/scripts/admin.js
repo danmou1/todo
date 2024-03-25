@@ -115,7 +115,7 @@ function editTask(taskId) {
     taskFormContainer.style.display = 'block';
     tasksContainer.style.display = 'none';
 
-    isEdit = true;
+    isEditTask = true;
     formTaskId = taskId;
 };
 
@@ -131,8 +131,8 @@ function submitTaskForm(taskId) {
         formData.taskId = (taskId);
     }
 
-    const method = isEdit ? 'PUT' : 'POST';
-    fetch('/ap1/v1/tasks', {
+    const method = isEditTask ? 'PUT' : 'POST';
+    fetch('/api/v1/tasks', {
         method: method,
         headers: {
             'Content-Type': 'application/json'
@@ -152,43 +152,40 @@ function submitTaskForm(taskId) {
 const newUserButton = document.getElementById('new-user-button');
 const usersContainer = document.getElementById('users-container');
 const userFormContainer = document.getElementById('user-form-container');
-const userForm = document.getElementById('user-form');
+const userUpdateFormContainer = document.getElementById('user-update-form-container');
+const userForm = document.getElementById('user-update-form');
 
 newUserButton.addEventListener('click', function() {
     userFormContainer.style.display = 'block';
     usersContainer.style.display = 'none';
 });
 
-let isEditUser = false;
 let formUserId = '';
 
-function editUser(taskId) {
-    const userRow = document.getElementById(`task-row-${taskId}`);
-    const userIdInput = userForm.elements['userId'];
-    const usernameInput = userForm.elements['username'];
-    const roleInput = userForm.elements['role'];
+function populateUserForm(userId) {
+    const userRow = document.getElementById(`user-row-${userId}`);
+    const userIdInput = userForm.elements['newUserId'];
+    const usernameInput = userForm.elements['newUsername'];
+    const roleInput = userForm.elements['newRole'];
     
     userIdInput.value = userRow.cells[0].textContent;
     usernameInput.value = userRow.cells[1].textContent;
     roleInput.value = userRow.cells[2].textContent;
 
-    userFormContainer.style.display = 'block';
+    userUpdateFormContainer.style.display = 'block';
     usersContainer.style.display = 'none';
 
-    isEditUser = true;
     formUserId = userId;
 };
 
-function submitUserForm(userId) {
-    const formData =  {
-        user_id: document.getElementById('userId').value,
+function submitUserAddition(userId) {
+    const formData = {
         username: document.getElementById('username').value,
-        role: document.getElementById('role').value,
+        password: document.getElementById('password').value,
     };
-    
-    const method = isEditUser ? 'PUT' : 'POST';
-    fetch('/ap1/v1/users', {
-        method: method,
+
+    fetch('/api/v1/users', {
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -200,7 +197,32 @@ function submitUserForm(userId) {
         }
     })
     .catch(err => {
-        console.error('Error submitting task:', err);
+        console.error('Error submitting form:', err);
+    })
+}
+
+function submitUserUpdate(userId) {
+    const formData =  {
+        userId: formUserId,
+        newUserId: document.getElementById('newUserId').value,
+        username: document.getElementById('newUsername').value,
+        role: document.getElementById('newRole').value,
+    };
+    
+    fetch('/api/v1/users', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(res => {
+        if (res.ok) {
+            window.location.reload();
+        }
+    })
+    .catch(err => {
+        console.error('Error submitting form:', err);
     })
 }
 
