@@ -97,7 +97,7 @@ async function deleteTask(taskId, title) {
 let isEdit = false;
 let formTaskId = '';
 
-function editTask(taskId) {
+function populateUserForm(taskId) {
     const taskRow = document.getElementById(`task-row-${taskId}`);
     const titleInput = taskForm.elements['title'];
     const descriptionInput = taskForm.elements['description'];
@@ -143,6 +143,6 @@ function submitTaskForm(taskId) {
         }
     })
     .catch(err => {
-        console.error('Error submitting task:', err);
+        console.error('Error submitting form:', err);
     })
 }
