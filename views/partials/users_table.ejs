@@ -11,13 +11,13 @@
         </thead>
         <tbody>
             <% users.forEach(user => { %>
-                <tr id="user-row-<%=user.userId%>">
+                <tr id="user-row-<%= user.user_id %>">
                     <td><%= user.user_id %></td>
                     <td><%= user.username %></td>
                     <td><%= user.role %></td>
                     <td>
-                        <input type="button" value="Delete" class="delete-button" onclick="deleteUser('<%= user.userId%>')" />
-                        <input type="button" value="Edit" class="edit-button" onclick="editUser('<%= user.userId%>')">
+                        <input type="button" value="Delete" class="delete-button" onclick="deleteUser('<%= user.user_id%>')" />
+                        <input type="button" value="Edit" class="edit-button" onclick="populateUserForm('<%= user.user_id%>')">
                     </td>
                 </tr>
             <% }); %>

@@ -1,0 +1,19 @@
+<div id="user-update-form-container" class="user-form-container" style="display: none;">
+    <form id="user-update-form">
+        <label for="userId">User ID:</label>
+        <input type="text" name="newUserId" id="newUserId">
+
+        <label for='username'>Username:</label>
+        <input type="text" name="username" id="newUsername" placeholder="Username...">
+        
+        <label for="role">Role:</label>
+        <select name="role" id="newRole">
+            <option value="">Default</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+        </select>
+        <br>
+
+        <button type="button" onclick="submitUserUpdate(formUserId)">Submit</button>
+    </form>
+</div>
