@@ -2,7 +2,7 @@ const express = require('express');
 require('dotenv').config();
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
-const { getTasks, addTask, updateTask, deleteTask, addUser, getUsers} = require('./db/queries');
+const { getTasks, addTask, updateTask, deleteTask, getUsers, addUser, updateUser, dele} = require('./db/queries');
 const { userAuth, verifyToken, authRole } = require('./db/userAuth')
 
 const cookieParser = require('cookie-parser');
@@ -110,28 +110,29 @@ function setupRoutes() {
     app.route('/api/v1/users')
         .post(authRole('admin', async (req, res) => {
             await addUser(req.body)
-            res.status(200);
+            res.send();
         }))
         .put(authRole('admin', async (req, res) => {
+            console.log(req.body);
             await updateUser(req.body);
-            res.status(200);
+            res.send();
         }))
         .delete(authRole('admin', async (req, res) => {
             await deleteUser(req.body);
-            res.status(200);
+            res.send();
         }));
     app.route('/api/v1/tasks')
         .post(async (req, res) => {
             await addTask(req.body, req.user);
-            res.status(200).send({ success: true }); 
+            res.send(); 
         })
         .put(async (req, res) => {
             await updateTask(req.body, req.user);
-            res.status(200).send({ success: true });
+            res.send();
         })
         .delete(async (req, res) => {
             await deleteTask(req.body, req.user);
-            res.status(200).send({ success: true });
+            res.send();
         });
     app.use((err, req, res, next) => {
         console.error(err);
