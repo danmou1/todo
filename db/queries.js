@@ -1,6 +1,7 @@
 const { getClient } = require('./connection');
 const crypto = require('crypto');
 const userAuth = require('./userAuth');
+const { builtinModules } = require('module');
 
 const client = getClient();
 
@@ -98,13 +99,12 @@ async function updateTask(body, user) {
     const updates = [];
     const params = [];
     
-    Object.entries(body)
-        .filter(([key, value]) => value !== '')
-        .forEach(([key, value], index) => {
+    Object.entries(body).forEach(([key, value], index) => {
+        if (value) {
             updates.push(`${key.replace(/([A-Z])/g, '_$1').toLowerCase()} = $${index + 1}`);
             params.push(value);
         }
-        );
+    });
     
     const query = `UPDATE tasks SET ${updates.join(', ')} WHERE task_id = $${params.length + 1}`;
 
@@ -147,8 +147,10 @@ async function getUsers() {
     return result.rows;
 }
 
-async function addUser(username, password) {
+async function addUser(body) {
     try {
+        const { username, password } = body;
+
         const salt = crypto.randomBytes(16).toString('hex');
         const hashedPassword = await scrypt(password, salt, 64)
 
@@ -158,11 +160,50 @@ async function addUser(username, password) {
     }
 };
 
+// untested queries below
+async function updateUser(body) {
+    const { userId, newUserId, ...data } = body;
+
+    const params = [];
+    const updates = [];
+
+    Object.entries(data).forEach(([key, value], index) => {
+        if (value) {
+            updates.push(`${key.replace(/([A-Z])/g, '_$1').toLowerCase()} = $${index + 1}`);
+            params.push(value);
+        }
+    });
+
+    if (newUserId) {
+        updates.push(`user_id`);
+        params.push(newUserId);
+    }
+
+    const query = `UPDATE users SET ${updates.join(', ')}, user_id = $${params.length} WHERE user_id = $1`;
+    try {
+        console.log(`[U${userId}] Updated:`)
+        updates.forEach((update, index) => {
+            console.log(`${update}: ${params[index]}`);
+        });
+
+        await client.query(query, [userId, ...params]);
+    } catch (err) {
+        console.error('Error updating user:', err);
+    }
+};
+
+async function deleteUser(body) {
+    const { userId } = body;
+    return client.query('DELETE FROM users WHERE user_id = $1', [userId])
+};
+
 module.exports = {
     getTasks,
     addTask,
     updateTask,
     deleteTask,
-    addUser,
     getUsers,
+    addUser,
+    updateUser,
+    deleteUser,
 };
