@@ -72,8 +72,7 @@ function setupRoutes() {
             res.render('register', { error: null });
         })
         .post(async (req, res) => {
-            const { username, password } = req.body;
-            addUser(username, password)
+            addUser(req.body)
             .then(() => res.status(200).send({ success: true }))
             .catch(err => {
                     switch (err.code) {
@@ -108,80 +107,6 @@ function setupRoutes() {
 
         res.render('dashboard', options);
     }));
-    // app.route('/app/tasks')
-    //     .get(async (req, res) => {
-    //         let { q: searchParams, d: date, c: isCompleted, t: dueToday } = req.query;
-            
-    //         const tasks = await getTasks({ searchParams, date, isCompleted, dueToday }, req.user);
-    //         const options = {
-    //             pageTitle: 'Dashboard',
-    //             tasks,
-    //             endpoint: req.originalUrl
-    //         }
-            
-    //         res.render('dashboard', options);
-    //     })
-    //     .post(async (req, res) => {
-    //         console.log(req.body, req.user);
-    //         await addTask(req.body, req.user);
-    //         res.redirect('/app/tasks');
-    //     })
-    //     .put(async (req, res) => {
-    //         try {
-    //             await updateTask(req.body, req.user);
-    //             res.status(200).send({ success: true });
-    //         } catch (err) {
-    //             res.status(500).send({ success: false, err: "Internal server error" });
-    //         }
-    //     })
-    //     .delete(async (req, res) => {
-    //         const { taskId } = req.body;
-
-    //         try {
-    //             await deleteTask(taskId, req.user);
-    //             res.status(200).send({ success: true });
-    //         } catch (error) {
-    //             res.status(500).send({ success: false, error: "Internal server error" });
-    //         }
-    //     });
-    // app.route('/app/admin')
-    //     .get(authRole('admin', async (req, res) => {
-    //         let { q: searchParams, d: date, c: isCompleted, t: dueToday } = req.query;
-    //         const tasks = await getTasks({ searchParams, date, isCompleted, dueToday }, req.user);
-
-    //         const options = {
-    //             pageTitle: 'Admin Panel',
-    //             tasks,
-    //             endpoint: req.originalUrl
-    //         };
-    //         options.users = await getUsers();
-
-    //         res.render('dashboard', options);
-    //     }))
-    //     .post(authRole('admin', async (req, res) => {
-    //         try {
-    //             await addTask(req.body, req.user);
-    //             res.status(200).send({ success: true });
-    //         } catch (err) {
-    //             res.status(500).send({ success: false, err: "Internal server error" });
-    //         }
-    //     }))
-    //     .put(authRole('admin', async (req, res) => {
-    //         try {
-    //             await updateTask(req.body, req.user);
-    //             res.status(200).send({ success: true });
-    //         } catch (err) {
-    //             res.status(500).send({ success: false, err: "Internal server error" });
-    //         }
-    //     }))
-    //     .delete(authRole('admin', async (req, res) => {
-    //         try {
-    //             await deleteTask(taskId, req.user);
-    //             res.status(200).send({ success: true });
-    //         } catch (error) {
-    //             res.status(500).send({ success: false, error: "Internal server error" });
-    //         }
-    //     }));
     app.route('/api/v1/users')
         .post(authRole('admin', async (req, res) => {
             await addUser(req.body)
