@@ -18,15 +18,15 @@ document.addEventListener('DOMContentLoaded', function() {
         let queryString = '';
         
         if (searchQuery) {
-            queryString += `?q=${encodeURIComponent(searchQuery)}`;
+            queryString += `?search=${encodeURIComponent(searchQuery)}`;
         }
         
         if (date) {
-            queryString += `${searchQuery ? '&' : '?'}d=${encodeURIComponent(date)}`;
+            queryString += `${searchQuery ? '&' : '?'}date=${encodeURIComponent(date)}`;
         }
         
         if (completed !== null ) {
-            queryString += `${searchQuery || date ? '&' : '?'}c=${completed}`;
+            queryString += `${searchQuery || date ? '&' : '?'}completed=${completed}`;
         }
 
         const pathname = window.location.pathname;;
