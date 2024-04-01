@@ -166,7 +166,7 @@
 # 21/03/2024 18:00 ->
 - restructuring API to better comply with REST;
 
-# 25/032/2024 17:30 -> 20:30
+# 25/03/2024 17:30 -> 20:30
 - finished user queries;
 - fixed bugs due to typos;
 - API is now fully functioning;
