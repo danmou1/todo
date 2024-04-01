@@ -16,9 +16,9 @@ function scrypt (password, salt, keylen) {
 
 async function getTasks(options = {}, user) {
     const {
-        searchParams = null,
-        isCompleted = null,
-        dueToday = null, 
+        search = null,
+        completed = null,
+        today = null, 
         date = null,
     } = options;
 
@@ -36,19 +36,19 @@ async function getTasks(options = {}, user) {
     }
 
     // normal querying
-    if (searchParams) {
+    if (search) {
         query += values.length ? ' AND' : ' WHERE';
         query += ` title ILIKE $${values.length + 1}`;
-        values.push(`%${searchParams}%`);
+        values.push(`%${search}%`);
     }
 
-    if (isCompleted !== null) {
+    if (completed !== null) {
         query += values.length ? ' AND' : ' WHERE'; 
         query += ` completed = $${values.length + 1}`;
-        values.push(isCompleted);
+        values.push(completed);
     }
 
-    if (dueToday) {
+    if (today) {
         query += values.length ? ' AND' : ' WHERE';
         query += ` due_date = CURRENT_DATE`;
     }
