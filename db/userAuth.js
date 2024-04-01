@@ -15,26 +15,6 @@ function verifyPassword(password, hashedPassword, salt) {
     return hash === hashedPassword;
 };
 
-//queries role in database then add the role to the user object.
-
-// async function checkRole(req, res, next) {
-//     const userId = req.user.userId;
-
-//     try {
-//         const result = await client.query('SELECT role FROM users WHERE user_id = $1', [userId]);
-//         if (result.rows.length === 0) {
-//             return res.status(403).json({ error: 'Forbidden' });
-//         }
-//         const role = result.rows[0].role;
-//         req.user.role = role;
-
-//         next();
-//     } catch (err) {
-//         console.error('Error querying the database:', err);
-//         return res.status(500).json({ error: 'Internal server error' });
-//     }
-// };
-
 function authRole(role, callback) {
     return (req, res) => {
         if (req.user.role !== role) {
@@ -82,6 +62,5 @@ async function userAuth(username, password) {
 module.exports = {
     userAuth,
     verifyToken,
-    // checkRole,
     authRole,
 };
