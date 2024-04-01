@@ -83,9 +83,14 @@ function setupRoutes() {
                 });
             });
     app.get('/app', async (req, res) => {
-        let { q: searchParams, d: date, c: isCompleted, t: dueToday } = req.query;
+        let {
+            search,
+            date,
+            completed,
+            today 
+        } = req.query;
 
-        const tasks = await getTasks({ searchParams, date, isCompleted, dueToday }, req.user);
+        const tasks = await getTasks({ search, date, completed, today }, req.user);
         const options = {
             pageTitle: 'Dashboard',
             tasks,
