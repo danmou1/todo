@@ -170,8 +170,3 @@
 - finished user queries;
 - fixed bugs due to typos;
 - API is now fully functioning;
-
-to talk:
-- how should I deal with the database connection, as it can't be hosted in the docker due to needing a separate container to be accessible.
-- enviromental variables and in which context should they be, and if I should keep using dotenv instead of just adding them manually
-when dir restructuring goes wrong lmaooo
