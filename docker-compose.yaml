@@ -1,13 +1,26 @@
-version: '3.8'
-
 services:
   app:
     build: ./app
-    network_mode: "host"
     ports:
       - 8080:8080
+    depends_on:
+      - postgres
   
   nginx:
     build: ./nginx
     ports:
       - 80:80
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: taskman_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
