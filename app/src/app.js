@@ -1,6 +1,5 @@
 const express = require('express');
 require('dotenv').config();
-console.log(process.env);
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
 const { getTasks, addTask, updateTask, deleteTask, getUsers, addUser, updateUser, dele} = require('./db/queries');

@@ -98,7 +98,7 @@ async function deleteTask(taskId, title) {
 let isEditTask = false;
 let formTaskId = '';
 
-function editTask(taskId) {
+function populateTaskForm(taskId) {
     const taskRow = document.getElementById(`task-row-${taskId}`);
     const titleInput = taskForm.elements['title'];
     const descriptionInput = taskForm.elements['description'];

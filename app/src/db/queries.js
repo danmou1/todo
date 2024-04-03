@@ -95,12 +95,17 @@ async function updateTask(body, user) {
             throw new Error('Forbidden');
         }
     }
+
+    const filteredBody = Object.fromEntries(
+        Object.entries(body)
+          .filter(([key, value]) => value === false || value)
+    );
         
     const updates = [];
     const params = [];
     
-    Object.entries(body).forEach(([key, value], index) => {
-        if (value) {
+    Object.entries(filteredBody).forEach(([key, value], index) => {
+        if (value === false || value) {
             updates.push(`${key.replace(/([A-Z])/g, '_$1').toLowerCase()} = $${index + 1}`);
             params.push(value);
         }

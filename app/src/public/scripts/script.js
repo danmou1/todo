@@ -45,19 +45,24 @@ document.addEventListener('DOMContentLoaded', function() {
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', async function () {
             const taskId = this.getAttribute('data-taskId');
-            const isCompleted = this.checked;
+            const completed = this.checked;
+            console.log(completed);
             
-            try {
-                await fetch(`/api/v1/tasks`, {
+            fetch(`/api/v1/tasks`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ taskId, completed: isCompleted })
-                });
-            } catch (error) {
-                console.error('Error marking task as completed:', error);
-            }
+                    body: JSON.stringify({ taskId, completed })
+            })
+            .then(res => {
+                if (res.ok) {
+                    window.location.reload();
+                }
+            })
+            .catch(err => {
+                console.error('Error marking task as completed:', err);
+            });
         });
     });
 });
@@ -97,12 +102,12 @@ async function deleteTask(taskId, title) {
 let isEdit = false;
 let formTaskId = '';
 
-function populateUserForm(taskId) {
+function populateTaskForm(taskId) {
     const taskRow = document.getElementById(`task-row-${taskId}`);
     const titleInput = taskForm.elements['title'];
     const descriptionInput = taskForm.elements['description'];
     const dueDateInput = taskForm.elements['dueDate'];
-    const priorityInput = taskForm.elements['priority']
+    const priorityInput = taskForm.elements['priority'];
     
     titleInput.value = taskRow.cells[1].textContent;
     descriptionInput.value = taskRow.cells[2].textContent;
@@ -139,7 +144,7 @@ function submitTaskForm(taskId) {
     })
     .then(res => {
         if (res.ok) {
-            locationreload();
+            window.location.reload();
         }
     })
     .catch(err => {
