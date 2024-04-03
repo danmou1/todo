@@ -1,5 +1,6 @@
 const express = require('express');
 require('dotenv').config();
+console.log(process.env);
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
 const { getTasks, addTask, updateTask, deleteTask, getUsers, addUser, updateUser, dele} = require('./db/queries');
@@ -7,9 +8,10 @@ const { userAuth, verifyToken, authRole } = require('./db/userAuth')
 
 const cookieParser = require('cookie-parser');
 const app = express();
-const port = 3000;
+const port = 8080;
 
 app.set('view engine', 'ejs');
+app.set('views', __dirname + "/views")
 
 app.use(express.static(__dirname + '/public'));
 app.use(express.json());
@@ -143,7 +145,7 @@ function setupRoutes() {
         console.error(err);
         if (err.code === '23505') {
             res.status(400).render('register', { error: 'Username already exists' });
-        } else {j
+        } else {
             res.status(500).json({ error: 'Internal server error' });
         }
     });
