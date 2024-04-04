@@ -1,5 +1,6 @@
 services:
   app:
+    image: danmou1/todo:latest
     build: ./app
     ports:
       - 8080:8080
@@ -7,6 +8,7 @@ services:
       - postgres
   
   nginx:
+    image: nginx
     build: ./nginx
     ports:
       - 80:80
