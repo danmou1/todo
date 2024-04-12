@@ -22,7 +22,7 @@
         </select>
         <br>
 
-        <% if (endpoint === '/admin') { %>
+        <% if (endpoint.startsWith('apps/todo/admin')) { %>
             <label for="taskUserId">Owner ID:</label>
             <input type="text" id="taskUserId" placeholder="Defaults to your ID."/>
             <br>

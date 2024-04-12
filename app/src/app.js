@@ -10,11 +10,11 @@ const app = express();
 const port = 8080;
 
 app.set('view engine', 'ejs');
-app.set('views', __dirname + "/views")
+app.set('views', __dirname + "/views/pages")
 
 app.use(express.static(__dirname + '/public'));
-app.use(express.json());
 app.use(cookieParser());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 async function startServer() {
@@ -34,18 +34,26 @@ async function startServer() {
 }
 
 app.use((req, res, next) => {
-    if (req.originalUrl === '/login' || req.originalUrl === '/register') {
+    if (req.originalUrl === '/') {
         return next();
     }
 
-    verifyToken(req, res, next);
+    if (req.originalUrl === '/apps/login' || req.originalUrl === '/apps/register') {
+        return next();
+    }
+
+    if (req.originalUrl.startsWith('/apps')) {
+        if (!req.cookies.token) {
+            return res.redirect('/apps/login');
+        }
+        verifyToken(req, res, next);
+    }
+
+    res.redirect('/');
 });
 
 function setupRoutes() {
-    app.get('/', (req, res) => {
-        res.redirect('/login');
-    });
-    app.route('/login')
+    app.route('/apps/login')
         .get((req, res) => {
             res.render('login');
         })
@@ -55,12 +63,13 @@ function setupRoutes() {
 
             if (authResult) {
                 const { token, user } = authResult;
-
                 res.cookie('token', token, { maxAge: 1000*60*60, httpOnly: true});
 
-                let redirectUrl = '/app';
+                let redirectUrl = '/apps';
+                redirectUrl += '/todo';
+
                 if (user.role === 'admin') {
-                    redirectUrl = '/admin';
+                    redirectUrl += '/admin';
                 }
 
                 res.redirect(redirectUrl);
@@ -68,7 +77,7 @@ function setupRoutes() {
                 res.status(401).json({ error: 'Invalid credentials.' });
             }
         });
-    app.route('/register')
+    app.route('/apps/register')
         .get((req, res) => {
             res.render('register', { error: null });
         })
@@ -83,7 +92,7 @@ function setupRoutes() {
                     };
                 });
             });
-    app.get('/app', async (req, res) => {
+    app.get('/apps/todo', async (req, res) => {
         let {
             search,
             date,
@@ -100,7 +109,7 @@ function setupRoutes() {
 
         res.render('dashboard', options);
     });
-    app.get('/admin', authRole('admin', async (req, res) => {
+    app.get('/apps/todo/admin', authRole('admin', async (req, res) => {
         let { q: searchParams, d: date, c: isCompleted, t: dueToday } = req.query;
         const tasks = await getTasks({ searchParams, date, isCompleted, dueToday }, req.user);
 
@@ -113,7 +122,7 @@ function setupRoutes() {
 
         res.render('dashboard', options);
     }));
-    app.route('/api/v1/users')
+    app.route('/api/todo/v1/users')
         .post(authRole('admin', async (req, res) => {
             await addUser(req.body)
             res.send();
@@ -127,7 +136,7 @@ function setupRoutes() {
             await deleteUser(req.body);
             res.send();
         }));
-    app.route('/api/v1/tasks')
+    app.route('/api/todo/v1/tasks')
         .post(async (req, res) => {
             await addTask(req.body, req.user);
             res.send(); 

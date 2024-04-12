@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const completed = this.checked;
             console.log(completed);
             
-            fetch(`/api/v1/tasks`, {
+            fetch(`/api/todo/v1/tasks`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -75,7 +75,7 @@ async function deleteTask(taskId, title) {
     }
     
     try {
-        const response = await fetch(`/api/v1/tasks`, {
+        const response = await fetch(`/api/todo/v1/tasks`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -135,7 +135,7 @@ function submitTaskForm(taskId) {
 
     const method = isEdit ? 'PUT' : 'POST';
 
-    fetch('/api/v1/tasks', {
+    fetch('/api/todo/v1/tasks', {
         method: method,
         headers: {
             'Content-Type': 'application/json'

@@ -5,7 +5,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
     const password = formData.get('password');
 
     try {
-        const response = await fetch('/register', {
+        const response = await fetch('/apps/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

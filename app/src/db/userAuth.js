@@ -26,12 +26,6 @@ function authRole(role, callback) {
 };
 
 async function verifyToken(req, res, next) {
-    const token = req.cookies.token;
-
-    if (!token) {
-        return res.redirect('/login');
-    }
-
     jwt.verify(token, secretKey, (err, decoded) => {
         if (err) {
             return res.status(403).json({ error: 'Forbidden: Invalid token'});

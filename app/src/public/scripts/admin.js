@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const isCompleted = this.checked;
         
             try {
-                await fetch(`/api/v1/tasks`, {
+                await fetch(`/api/todo/v1/tasks`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ async function deleteTask(taskId, title) {
     }
 
     try {
-        const response = await fetch(`/api/v1/tasks`, {
+        const response = await fetch(`/api/todo/v1/tasks`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -132,7 +132,7 @@ function submitTaskForm(taskId) {
     }
 
     const method = isEditTask ? 'PUT' : 'POST';
-    fetch('/api/v1/tasks', {
+    fetch('/api/todo/v1/tasks', {
         method: method,
         headers: {
             'Content-Type': 'application/json'
@@ -184,7 +184,7 @@ function submitUserAddition(userId) {
         password: document.getElementById('password').value,
     };
 
-    fetch('/api/v1/users', {
+    fetch('/api/todo/v1/users', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -209,7 +209,7 @@ function submitUserUpdate(userId) {
         role: document.getElementById('newRole').value,
     };
     
-    fetch('/api/v1/users', {
+    fetch('/api/todo/v1/users', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -234,7 +234,7 @@ async function deleteUser(userId) {
     }
 
     try {
-        const response = await fetch(`/api/v1/users/`, {
+        const response = await fetch(`/api/todo/v1/users/`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
