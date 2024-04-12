@@ -1,0 +1,34 @@
+<link rel="stylesheet" type="text/css" href="/styles/navbar.css">
+<nav class="navbar">
+
+    <form id="search-form" class="topnav">
+        <input type="text" id="search-input" name="query" placeholder="Search">
+        <button type="submit">Search</button>
+    </form>
+
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a href="<%= endpoint %>">
+                <span>All Tasks</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="<%= endpoint %>?today=true">
+                <span>Today</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="<%= endpoint %>?completed=false">
+                <span>Upcoming</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="<%= endpoint %>?completed=true">
+                <span>Completed</span>
+            </a>
+        </li>
+    </ul>
+</nav>
