@@ -49,10 +49,13 @@ app.use((req, res, next) => {
         verifyToken(req, res, next);
     }
 
-    res.redirect('/');
+    next();
 });
 
 function setupRoutes() {
+    app.get('/', (req, res) => {
+        res.render('index')
+    })
     app.route('/apps/login')
         .get((req, res) => {
             res.render('login');
@@ -65,9 +68,7 @@ function setupRoutes() {
                 const { token, user } = authResult;
                 res.cookie('token', token, { maxAge: 1000*60*60, httpOnly: true});
 
-                let redirectUrl = '/apps';
-                redirectUrl += '/todo';
-
+                let redirectUrl = '/apps/todo';
                 if (user.role === 'admin') {
                     redirectUrl += '/admin';
                 }
