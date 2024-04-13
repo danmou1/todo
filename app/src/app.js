@@ -2,7 +2,7 @@ const express = require('express');
 require('dotenv').config();
 
 const { initializeDatabase, runMigrations, closeDatabaseConnection } = require('./db/connection');
-const { getTasks, addTask, updateTask, deleteTask, getUsers, addUser, updateUser, dele} = require('./db/queries');
+const { getTasks, addTask, updateTask, deleteTask, getUsers, addUser, updateUser} = require('./db/queries');
 const { userAuth, verifyToken, authRole } = require('./db/userAuth')
 
 const cookieParser = require('cookie-parser');
